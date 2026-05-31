@@ -2,1033 +2,590 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fixture Mundial 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mundial 2026 🌎</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── Base ── */
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+       background: #f0f2f5; color: #1a1a1a; font-size: 16px; padding-bottom: 72px; }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #0a0a1a;
-    color: #e0e0e0;
-    font-size: 14px;
-  }
+/* ── Header ── */
+.header { background: #1d3557; color: white; padding: 14px 16px 12px;
+          display: flex; align-items: center; justify-content: space-between;
+          position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.header h1 { font-size: 1.15rem; font-weight: 700; }
+.header .sub { font-size: 0.7rem; color: rgba(255,255,255,.65); margin-top: 2px; }
+.tz-chip { background: #e8c53a; color: #1a1a1a; font-size: 0.65rem; font-weight: 700;
+           padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
 
-  header {
-    background: linear-gradient(135deg, #1a1a3e 0%, #0d2b6e 50%, #1a1a3e 100%);
-    padding: 20px 16px 16px;
-    text-align: center;
-    border-bottom: 3px solid #c9a227;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  header h1 { font-size: 1.4rem; color: #c9a227; letter-spacing: 1px; }
-  header p { font-size: 0.75rem; color: #aaa; margin-top: 4px; }
+/* ── Bottom Nav ── */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+              background: white; border-top: 1px solid #e0e0e0;
+              display: flex; height: 62px; box-shadow: 0 -2px 10px rgba(0,0,0,.08); }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center;
+           justify-content: center; gap: 3px; background: none; border: none;
+           font-size: 0.65rem; color: #888; cursor: pointer; padding: 6px 0;
+           transition: color .2s; }
+.nav-btn .icon { font-size: 1.4rem; }
+.nav-btn.active { color: #1d3557; font-weight: 700; }
+.nav-btn.active .icon { transform: scale(1.1); }
 
-  .timezone-badge {
-    display: inline-block;
-    background: #c9a227;
-    color: #000;
-    font-size: 0.7rem;
-    font-weight: bold;
-    padding: 2px 8px;
-    border-radius: 10px;
-    margin-top: 6px;
-  }
+/* ── Tabs ── */
+.tab { display: none; padding: 14px 14px 10px; }
+.tab.active { display: block; }
 
-  nav {
-    display: flex;
-    overflow-x: auto;
-    gap: 8px;
-    padding: 10px 12px;
-    background: #111128;
-    border-bottom: 1px solid #222;
-    scrollbar-width: none;
-  }
-  nav::-webkit-scrollbar { display: none; }
-  nav button {
-    flex-shrink: 0;
-    background: #1e1e3a;
-    color: #ccc;
-    border: 1px solid #333;
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  nav button.active, nav button:hover {
-    background: #c9a227;
-    color: #000;
-    border-color: #c9a227;
-    font-weight: bold;
-  }
+/* ── Argentina Tab ── */
+.next-match-card {
+  background: linear-gradient(135deg, #1d3557 0%, #2566a0 100%);
+  color: white; border-radius: 16px; padding: 18px 18px 16px;
+  margin-bottom: 16px; box-shadow: 0 4px 16px rgba(29,53,87,.3);
+}
+.next-match-card .card-label { font-size: 0.7rem; text-transform: uppercase;
+  letter-spacing: 1px; opacity: .7; margin-bottom: 10px; }
+.next-match-card .countdown { font-size: 0.85rem; background: rgba(255,255,255,.15);
+  display: inline-block; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; }
+.next-match-card .teams { font-size: 1.5rem; font-weight: 800; line-height: 1.2;
+  margin-bottom: 12px; }
+.next-match-card .match-meta { display: flex; flex-direction: column; gap: 5px; }
+.next-match-card .meta-item { display: flex; align-items: center; gap: 7px;
+  font-size: 0.85rem; opacity: .9; }
+.next-match-card .time-big { font-size: 2rem; font-weight: 900; color: #e8c53a;
+  line-height: 1; margin-bottom: 4px; }
+.next-match-card .time-label { font-size: 0.7rem; opacity: .7; }
 
-  .section { display: none; padding: 12px; }
-  .section.active { display: block; }
+.section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+  color: #888; font-weight: 700; margin: 0 0 10px; }
 
-  /* GRUPOS */
-  .groups-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-  .group-card {
-    background: #151530;
-    border: 1px solid #2a2a50;
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .group-header {
-    background: #1e1e4a;
-    padding: 6px 10px;
-    font-weight: bold;
-    font-size: 0.8rem;
-    color: #c9a227;
-    text-align: center;
-    letter-spacing: 1px;
-  }
-  .group-team {
-    padding: 5px 10px;
-    font-size: 0.78rem;
-    border-bottom: 1px solid #1e1e3a;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .group-team:last-child { border-bottom: none; }
-  .group-team.argentina { background: #1a2a40; color: #75bfff; font-weight: bold; }
+.arg-match-card { background: white; border-radius: 12px; padding: 14px 16px;
+  margin-bottom: 10px; border-left: 4px solid #74b9ff; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+.arg-match-card .match-date { font-size: 0.72rem; color: #888; margin-bottom: 6px; font-weight: 600; }
+.arg-match-card .match-teams-row { display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 8px; }
+.arg-match-card .team-name { font-size: 1.05rem; font-weight: 700; }
+.arg-match-card .team-name.arg { color: #1d3557; }
+.arg-match-card .vs { font-size: 0.75rem; color: #aaa; font-weight: 600; padding: 0 6px; }
+.arg-match-card .time-venue { display: flex; justify-content: space-between;
+  align-items: center; }
+.arg-match-card .time-badge { background: #1d3557; color: white; font-size: 0.9rem;
+  font-weight: 800; padding: 4px 12px; border-radius: 20px; }
+.arg-match-card .venue { font-size: 0.72rem; color: #888; text-align: right; }
+.arg-match-card.played { border-left-color: #b2bec3; opacity: .7; }
+.arg-match-card.next { border-left-color: #e8c53a; }
 
-  /* PARTIDOS */
-  .day-block { margin-bottom: 16px; }
-  .day-header {
-    background: #1e1e4a;
-    border-left: 4px solid #c9a227;
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    font-weight: bold;
-    color: #c9a227;
-    border-radius: 0 6px 6px 0;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+.info-card { background: white; border-radius: 12px; padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 10px; }
+.info-card h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+  color: #888; font-weight: 700; margin-bottom: 10px; }
+.info-row { display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+.info-row:last-child { border-bottom: none; }
+.info-row .val { font-weight: 700; text-align: right; }
+.group-pill { background: #1d3557; color: white; font-size: 0.7rem; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 14px; }
 
-  .match-card {
-    background: #151530;
-    border: 1px solid #222244;
-    border-radius: 8px;
-    margin-bottom: 6px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-  .match-card:hover { border-color: #c9a227; }
-  .match-card.argentina-match {
-    border-color: #75bfff;
-    background: #0d1a2e;
-  }
-  .match-card.argentina-match .match-teams { color: #75bfff; }
+/* ── Partidos Tab ── */
+.filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-btn { flex-shrink: 0; background: white; border: 2px solid #e0e0e0;
+  border-radius: 20px; padding: 7px 16px; font-size: 0.82rem; font-weight: 600;
+  color: #666; cursor: pointer; white-space: nowrap; transition: all .2s; }
+.filter-btn.active { background: #1d3557; border-color: #1d3557; color: white; }
 
-  .match-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px 10px;
-    background: #0e0e28;
-    font-size: 0.68rem;
-    color: #888;
-  }
-  .match-header .group-badge {
-    background: #2a2a50;
-    color: #c9a227;
-    padding: 1px 7px;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 0.65rem;
-  }
-  .match-header .round-badge {
-    background: #2a3a20;
-    color: #7fc47f;
-    padding: 1px 7px;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 0.65rem;
-  }
+.day-section { margin-bottom: 18px; }
+.day-header { font-size: 0.8rem; font-weight: 800; color: #1d3557;
+  text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 4px 8px;
+  display: flex; align-items: center; gap: 8px; }
+.day-header .today-tag { background: #e8c53a; color: #1a1a1a; font-size: 0.65rem;
+  font-weight: 800; padding: 2px 8px; border-radius: 10px; }
+.day-header .tomorrow-tag { background: #74b9ff; color: #1a1a1a; font-size: 0.65rem;
+  font-weight: 800; padding: 2px 8px; border-radius: 10px; }
 
-  .match-body {
-    padding: 8px 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .match-time {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #c9a227;
-    min-width: 48px;
-    text-align: center;
-    line-height: 1;
-  }
-  .match-time .hs-label {
-    display: block;
-    font-size: 0.55rem;
-    color: #666;
-    font-weight: normal;
-    margin-top: 2px;
-  }
-  .match-teams {
-    flex: 1;
-    font-size: 0.82rem;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-  .match-venue {
-    font-size: 0.65rem;
-    color: #666;
-    text-align: right;
-    line-height: 1.4;
-    max-width: 100px;
-  }
-  .match-venue strong { color: #999; display: block; }
+.match-card { background: white; border-radius: 12px; padding: 12px 14px;
+  margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  display: flex; align-items: center; gap: 12px; }
+.match-card.arg-card { border-left: 4px solid #e8c53a; background: #fffdf0; }
+.match-card .time { font-size: 1.1rem; font-weight: 800; color: #1d3557;
+  min-width: 52px; text-align: center; line-height: 1; }
+.match-card .time .midnight { font-size: 0.62rem; color: #aaa; display: block; margin-top: 2px; }
+.match-card .info { flex: 1; min-width: 0; }
+.match-card .teams { font-size: 0.95rem; font-weight: 700;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.match-card .teams.arg-teams { color: #1d3557; }
+.match-card .venue-line { font-size: 0.7rem; color: #aaa; margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.match-card .gr-badge { font-size: 0.65rem; font-weight: 700; color: white;
+  background: #636e72; padding: 2px 7px; border-radius: 8px; white-space: nowrap; flex-shrink: 0; }
+.match-card .gr-badge.arg { background: #1d3557; }
+.match-card .gr-badge.elim { background: #6c5ce7; }
 
-  .madrugada-note {
-    font-size: 0.65rem;
-    color: #888;
-    font-style: italic;
-    text-align: right;
-    padding: 2px 10px 6px;
-  }
+.no-results { text-align: center; padding: 30px; color: #aaa; font-size: 0.9rem; }
 
-  .jornada-title {
-    text-align: center;
-    font-size: 0.7rem;
-    color: #888;
-    margin: 4px 0 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
+/* ── Grupos Tab ── */
+.groups-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.group-card { background: white; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+.group-title { background: #1d3557; color: white; padding: 8px 12px;
+  font-size: 0.8rem; font-weight: 800; text-align: center; letter-spacing: 1px; }
+.group-team { padding: 9px 12px; font-size: 0.85rem; border-bottom: 1px solid #f5f5f5;
+  display: flex; align-items: center; gap: 6px; }
+.group-team:last-child { border-bottom: none; }
+.group-team.arg { background: #f0f6ff; color: #1d3557; font-weight: 800; }
 
-  /* RESUMEN ARGENTINA */
-  .arg-section { padding: 12px; }
-  .arg-header {
-    text-align: center;
-    padding: 16px;
-    background: linear-gradient(135deg, #1a2a50, #0d3d8c);
-    border-radius: 12px;
-    margin-bottom: 16px;
-    border: 1px solid #3a5aaa;
-  }
-  .arg-header h2 { font-size: 1.1rem; color: #75bfff; }
-  .arg-header p { font-size: 0.75rem; color: #aaa; margin-top: 4px; }
+/* ── Eliminatorias section ── */
+.elim-stage { background: white; border-radius: 12px; padding: 14px 16px;
+  margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+.elim-stage h3 { font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 10px; }
+.elim-match { display: flex; align-items: center; gap: 12px; padding: 9px 0;
+  border-bottom: 1px solid #f5f5f5; }
+.elim-match:last-child { border-bottom: none; }
+.elim-match .e-time { font-size: 1rem; font-weight: 800; color: #1d3557;
+  min-width: 50px; text-align: center; }
+.elim-match .e-info { flex: 1; }
+.elim-match .e-desc { font-size: 0.88rem; font-weight: 600; }
+.elim-match .e-venue { font-size: 0.7rem; color: #aaa; margin-top: 2px; }
 
-  .arg-match {
-    background: #0d1a2e;
-    border: 1px solid #3a5aaa;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 10px;
-  }
-  .arg-match-date { font-size: 0.72rem; color: #75bfff; font-weight: bold; margin-bottom: 6px; }
-  .arg-match-teams { font-size: 1.1rem; font-weight: bold; margin-bottom: 6px; }
-  .arg-match-info { font-size: 0.72rem; color: #999; display: flex; flex-wrap: wrap; gap: 10px; }
-  .arg-match-info span::before { content: "📍 "; }
-  .arg-match-info .time-badge {
-    background: #c9a227;
-    color: #000;
-    font-weight: bold;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.75rem;
-  }
-  .arg-match-info .time-badge::before { content: ""; }
+.final-card { background: linear-gradient(135deg, #b8860b, #e8c53a);
+  color: #1a1a1a; border-radius: 14px; padding: 18px; margin-bottom: 12px;
+  text-align: center; box-shadow: 0 4px 14px rgba(232,197,58,.4); }
+.final-card .f-label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1px; opacity: .7; }
+.final-card .f-date { font-size: 1.2rem; font-weight: 900; margin: 6px 0; }
+.final-card .f-time { font-size: 2rem; font-weight: 900; }
+.final-card .f-venue { font-size: 0.82rem; margin-top: 6px; opacity: .8; }
 
-  .info-box {
-    background: #151530;
-    border: 1px solid #222244;
-    border-radius: 10px;
-    padding: 12px;
-    margin-top: 12px;
-  }
-  .info-box h3 { font-size: 0.8rem; color: #c9a227; margin-bottom: 8px; }
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 0;
-    border-bottom: 1px solid #1e1e3a;
-    font-size: 0.78rem;
-  }
-  .info-row:last-child { border-bottom: none; }
-  .info-row .label { color: #888; }
-  .info-row .value { color: #e0e0e0; font-weight: 600; text-align: right; }
-
-  footer {
-    text-align: center;
-    padding: 16px;
-    font-size: 0.65rem;
-    color: #555;
-    border-top: 1px solid #1a1a30;
-  }
+/* ── Utility ── */
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>⚽ MUNDIAL 2026</h1>
-  <p>11 jun — 19 jul · EE.UU., México y Canadá</p>
-  <div class="timezone-badge">🕐 Horarios en Buenos Aires (ART)</div>
-</header>
+<div class="header">
+  <div>
+    <div class="h1">⚽ Mundial 2026</div>
+    <div class="sub">EE.UU. · México · Canadá &nbsp;|&nbsp; 11 jun — 19 jul</div>
+  </div>
+  <div class="tz-chip">🕐 Hora BsAs</div>
+</div>
 
-<nav>
-  <button class="active" onclick="showTab('argentina')">🇦🇷 Argentina</button>
-  <button onclick="showTab('grupos')">Grupos</button>
-  <button onclick="showTab('jornada1')">Jornada 1</button>
-  <button onclick="showTab('jornada2')">Jornada 2</button>
-  <button onclick="showTab('jornada3')">Jornada 3</button>
-  <button onclick="showTab('eliminatorias')">Eliminatorias</button>
+<!-- ══════════════════════ TAB: ARGENTINA ══════════════════════ -->
+<div id="tab-arg" class="tab active">
+
+  <div id="next-card"></div>
+
+  <p class="section-title">Los 3 partidos del Grupo J</p>
+  <span class="group-pill">GRUPO J · Argentina · Argelia · Austria · Jordania</span>
+
+  <div class="arg-match-card next" id="arg1">
+    <div class="match-date">MARTES 16 DE JUNIO · Jornada 1</div>
+    <div class="match-teams-row">
+      <div class="team-name arg">🇦🇷 Argentina</div>
+      <div class="vs">vs</div>
+      <div class="team-name">🇩🇿 Argelia</div>
+    </div>
+    <div class="time-venue">
+      <div class="time-badge">22:00 hs</div>
+      <div class="venue">Arrowhead Stadium<br>Kansas City, EE.UU.</div>
+    </div>
+  </div>
+
+  <div class="arg-match-card" id="arg2">
+    <div class="match-date">DOMINGO 22 DE JUNIO · Jornada 2</div>
+    <div class="match-teams-row">
+      <div class="team-name arg">🇦🇷 Argentina</div>
+      <div class="vs">vs</div>
+      <div class="team-name">🇦🇹 Austria</div>
+    </div>
+    <div class="time-venue">
+      <div class="time-badge">14:00 hs</div>
+      <div class="venue">AT&amp;T Stadium<br>Dallas, EE.UU.</div>
+    </div>
+  </div>
+
+  <div class="arg-match-card" id="arg3">
+    <div class="match-date">VIERNES 27 DE JUNIO · Jornada 3</div>
+    <div class="match-teams-row">
+      <div class="team-name">🇯🇴 Jordania</div>
+      <div class="vs">vs</div>
+      <div class="team-name arg">🇦🇷 Argentina</div>
+    </div>
+    <div class="time-venue">
+      <div class="time-badge">23:00 hs</div>
+      <div class="venue">AT&amp;T Stadium<br>Dallas, EE.UU.</div>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <h3>El torneo</h3>
+    <div class="info-row"><span>Equipos</span><span class="val">48 selecciones</span></div>
+    <div class="info-row"><span>Partidos totales</span><span class="val">104</span></div>
+    <div class="info-row"><span>Clasifican de cada grupo</span><span class="val">Top 2 + mejores 3°</span></div>
+    <div class="info-row"><span>🏆 Gran Final</span><span class="val">Dom 19 jul · 16:00 hs</span></div>
+    <div class="info-row"><span>Sede de la Final</span><span class="val">MetLife Stadium, NJ</span></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════ TAB: PARTIDOS ══════════════════════ -->
+<div id="tab-cal" class="tab">
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setFilter('todos',this)">🌍 Todos</button>
+    <button class="filter-btn" onclick="setFilter('argentina',this)">🇦🇷 Argentina</button>
+    <button class="filter-btn" onclick="setFilter('hoy',this)" id="btn-hoy">📅 Hoy</button>
+  </div>
+
+  <div id="matches-container"></div>
+
+</div>
+
+<!-- ══════════════════════ TAB: GRUPOS ══════════════════════ -->
+<div id="tab-grupos" class="tab">
+
+  <div class="groups-grid">
+    <div class="group-card"><div class="group-title">GRUPO A</div>
+      <div class="group-team">🇲🇽 México</div><div class="group-team">🇿🇦 Sudáfrica</div>
+      <div class="group-team">🇰🇷 Corea del Sur</div><div class="group-team">🇨🇿 Rep. Checa</div></div>
+    <div class="group-card"><div class="group-title">GRUPO B</div>
+      <div class="group-team">🇨🇦 Canadá</div><div class="group-team">🇨🇭 Suiza</div>
+      <div class="group-team">🇶🇦 Qatar</div><div class="group-team">🇧🇦 Bosnia y Herz.</div></div>
+    <div class="group-card"><div class="group-title">GRUPO C</div>
+      <div class="group-team">🇧🇷 Brasil</div><div class="group-team">🇲🇦 Marruecos</div>
+      <div class="group-team">🇭🇹 Haití</div><div class="group-team">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia</div></div>
+    <div class="group-card"><div class="group-title">GRUPO D</div>
+      <div class="group-team">🇺🇸 EE.UU.</div><div class="group-team">🇵🇾 Paraguay</div>
+      <div class="group-team">🇦🇺 Australia</div><div class="group-team">🇹🇷 Turquía</div></div>
+    <div class="group-card"><div class="group-title">GRUPO E</div>
+      <div class="group-team">🇩🇪 Alemania</div><div class="group-team">🇨🇼 Curazao</div>
+      <div class="group-team">🇨🇮 Costa de Marfil</div><div class="group-team">🇪🇨 Ecuador</div></div>
+    <div class="group-card"><div class="group-title">GRUPO F</div>
+      <div class="group-team">🇳🇱 Países Bajos</div><div class="group-team">🇯🇵 Japón</div>
+      <div class="group-team">🇸🇪 Suecia</div><div class="group-team">🇹🇳 Túnez</div></div>
+    <div class="group-card"><div class="group-title">GRUPO G</div>
+      <div class="group-team">🇧🇪 Bélgica</div><div class="group-team">🇪🇬 Egipto</div>
+      <div class="group-team">🇮🇷 Irán</div><div class="group-team">🇳🇿 Nueva Zelanda</div></div>
+    <div class="group-card"><div class="group-title">GRUPO H</div>
+      <div class="group-team">🇪🇸 España</div><div class="group-team">🇨🇻 Cabo Verde</div>
+      <div class="group-team">🇸🇦 Arabia Saudita</div><div class="group-team">🇺🇾 Uruguay</div></div>
+    <div class="group-card"><div class="group-title">GRUPO I</div>
+      <div class="group-team">🇫🇷 Francia</div><div class="group-team">🇸🇳 Senegal</div>
+      <div class="group-team">🇮🇶 Irak</div><div class="group-team">🇳🇴 Noruega</div></div>
+    <div class="group-card"><div class="group-title">GRUPO J</div>
+      <div class="group-team arg">🇦🇷 Argentina 🏆</div><div class="group-team">🇩🇿 Argelia</div>
+      <div class="group-team">🇦🇹 Austria</div><div class="group-team">🇯🇴 Jordania</div></div>
+    <div class="group-card"><div class="group-title">GRUPO K</div>
+      <div class="group-team">🇵🇹 Portugal</div><div class="group-team">🇨🇩 RD Congo</div>
+      <div class="group-team">🇺🇿 Uzbekistán</div><div class="group-team">🇨🇴 Colombia</div></div>
+    <div class="group-card"><div class="group-title">GRUPO L</div>
+      <div class="group-team">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra</div><div class="group-team">🇭🇷 Croacia</div>
+      <div class="group-team">🇬🇭 Ghana</div><div class="group-team">🇵🇦 Panamá</div></div>
+  </div>
+
+  <br>
+  <div class="final-card">
+    <div class="f-label">🏆 Gran Final</div>
+    <div class="f-date">Domingo 19 de julio de 2026</div>
+    <div class="f-time">16:00 hs</div>
+    <div class="f-venue">MetLife Stadium · East Rutherford, Nueva Jersey 🇺🇸</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════ BOTTOM NAV ══════════════════════ -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showTab('arg',this)">
+    <span class="icon">🇦🇷</span>Argentina
+  </button>
+  <button class="nav-btn" onclick="showTab('cal',this)">
+    <span class="icon">📅</span>Partidos
+  </button>
+  <button class="nav-btn" onclick="showTab('grupos',this)">
+    <span class="icon">📊</span>Grupos
+  </button>
 </nav>
 
-<!-- ===== ARGENTINA ===== -->
-<div id="argentina" class="section active arg-section">
-
-  <div class="arg-header">
-    <h2>🇦🇷 Selección Argentina — Grupo J</h2>
-    <p>Campeones del Mundo · Qatar 2022</p>
-  </div>
-
-  <div class="arg-match">
-    <div class="arg-match-date">MARTES 16 DE JUNIO · JORNADA 1</div>
-    <div class="arg-match-teams">🇦🇷 Argentina vs Argelia 🇩🇿</div>
-    <div class="arg-match-info">
-      <span class="time-badge">22:00 hs</span>
-      <span>Arrowhead Stadium, Kansas City</span>
-    </div>
-  </div>
-
-  <div class="arg-match">
-    <div class="arg-match-date">DOMINGO 22 DE JUNIO · JORNADA 2</div>
-    <div class="arg-match-teams">🇦🇷 Argentina vs Austria 🇦🇹</div>
-    <div class="arg-match-info">
-      <span class="time-badge">14:00 hs</span>
-      <span>AT&amp;T Stadium, Dallas</span>
-    </div>
-  </div>
-
-  <div class="arg-match">
-    <div class="arg-match-date">VIERNES 27 DE JUNIO · JORNADA 3</div>
-    <div class="arg-match-teams">🇯🇴 Jordania vs Argentina 🇦🇷</div>
-    <div class="arg-match-info">
-      <span class="time-badge">23:00 hs</span>
-      <span>AT&amp;T Stadium, Dallas</span>
-    </div>
-  </div>
-
-  <div class="info-box">
-    <h3>Grupo J — Los 4 equipos</h3>
-    <div class="info-row"><span class="label">🇦🇷 Argentina</span><span class="value">Campeón vigente</span></div>
-    <div class="info-row"><span class="label">🇩🇿 Argelia</span><span class="value">África</span></div>
-    <div class="info-row"><span class="label">🇦🇹 Austria</span><span class="value">Europa</span></div>
-    <div class="info-row"><span class="label">🇯🇴 Jordania</span><span class="value">Asia</span></div>
-  </div>
-
-  <div class="info-box">
-    <h3>Datos del torneo</h3>
-    <div class="info-row"><span class="label">Equipos</span><span class="value">48 selecciones</span></div>
-    <div class="info-row"><span class="label">Partidos totales</span><span class="value">104</span></div>
-    <div class="info-row"><span class="label">Grupos</span><span class="value">12 (de 4 equipos)</span></div>
-    <div class="info-row"><span class="label">Clasifican</span><span class="value">2 por grupo + 8 mejores 3°</span></div>
-    <div class="info-row"><span class="label">Final</span><span class="value">19 jul · 16:00 hs</span></div>
-    <div class="info-row"><span class="label">Sede de la final</span><span class="value">MetLife Stadium, NJ</span></div>
-  </div>
-</div>
-
-<!-- ===== GRUPOS ===== -->
-<div id="grupos" class="section">
-  <div class="groups-grid">
-    <div class="group-card">
-      <div class="group-header">GRUPO A</div>
-      <div class="group-team">🇲🇽 México</div>
-      <div class="group-team">🇿🇦 Sudáfrica</div>
-      <div class="group-team">🇰🇷 Corea del Sur</div>
-      <div class="group-team">🇨🇿 Rep. Checa</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO B</div>
-      <div class="group-team">🇨🇦 Canadá</div>
-      <div class="group-team">🇨🇭 Suiza</div>
-      <div class="group-team">🇶🇦 Qatar</div>
-      <div class="group-team">🇧🇦 Bosnia y Herz.</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO C</div>
-      <div class="group-team">🇧🇷 Brasil</div>
-      <div class="group-team">🇲🇦 Marruecos</div>
-      <div class="group-team">🇭🇹 Haití</div>
-      <div class="group-team">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO D</div>
-      <div class="group-team">🇺🇸 EE.UU.</div>
-      <div class="group-team">🇵🇾 Paraguay</div>
-      <div class="group-team">🇦🇺 Australia</div>
-      <div class="group-team">🇹🇷 Turquía</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO E</div>
-      <div class="group-team">🇩🇪 Alemania</div>
-      <div class="group-team">🇨🇼 Curazao</div>
-      <div class="group-team">🇨🇮 Costa de Marfil</div>
-      <div class="group-team">🇪🇨 Ecuador</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO F</div>
-      <div class="group-team">🇳🇱 Países Bajos</div>
-      <div class="group-team">🇯🇵 Japón</div>
-      <div class="group-team">🇸🇪 Suecia</div>
-      <div class="group-team">🇹🇳 Túnez</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO G</div>
-      <div class="group-team">🇧🇪 Bélgica</div>
-      <div class="group-team">🇪🇬 Egipto</div>
-      <div class="group-team">🇮🇷 Irán</div>
-      <div class="group-team">🇳🇿 Nueva Zelanda</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO H</div>
-      <div class="group-team">🇪🇸 España</div>
-      <div class="group-team">🇨🇻 Cabo Verde</div>
-      <div class="group-team">🇸🇦 Arabia Saudita</div>
-      <div class="group-team">🇺🇾 Uruguay</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO I</div>
-      <div class="group-team">🇫🇷 Francia</div>
-      <div class="group-team">🇸🇳 Senegal</div>
-      <div class="group-team">🇮🇶 Irak</div>
-      <div class="group-team">🇳🇴 Noruega</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO J</div>
-      <div class="group-team argentina">🇦🇷 Argentina 🏆</div>
-      <div class="group-team">🇩🇿 Argelia</div>
-      <div class="group-team">🇦🇹 Austria</div>
-      <div class="group-team">🇯🇴 Jordania</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO K</div>
-      <div class="group-team">🇵🇹 Portugal</div>
-      <div class="group-team">🇨🇩 RD Congo</div>
-      <div class="group-team">🇺🇿 Uzbekistán</div>
-      <div class="group-team">🇨🇴 Colombia</div>
-    </div>
-    <div class="group-card">
-      <div class="group-header">GRUPO L</div>
-      <div class="group-team">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra</div>
-      <div class="group-team">🇭🇷 Croacia</div>
-      <div class="group-team">🇬🇭 Ghana</div>
-      <div class="group-team">🇵🇦 Panamá</div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== JORNADA 1 ===== -->
-<div id="jornada1" class="section">
-  <p class="jornada-title">Jornada 1 · 11 al 17 de junio</p>
-
-  <div class="day-block">
-    <div class="day-header">Jueves 11 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO A</span><span>Estadio Azteca · Ciudad de México 🇲🇽</span></div>
-      <div class="match-body">
-        <div class="match-time">16:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇲🇽 México vs Sudáfrica 🇿🇦</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO A</span><span>Estadio Akron · Guadalajara 🇲🇽</span></div>
-      <div class="match-body">
-        <div class="match-time">23:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇰🇷 Corea del Sur vs Rep. Checa 🇨🇿</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Viernes 12 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO B</span><span>BMO Field · Toronto 🇨🇦</span></div>
-      <div class="match-body">
-        <div class="match-time">16:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇨🇦 Canadá vs Bosnia y Herz. 🇧🇦</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO D</span><span>SoFi Stadium · Los Ángeles 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">22:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇺🇸 EE.UU. vs Paraguay 🇵🇾</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Sábado 13 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO B</span><span>Levi's Stadium · San Francisco Bay 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">16:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇶🇦 Qatar vs Suiza 🇨🇭</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO C</span><span>MetLife Stadium · Nueva York/NJ 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">19:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇧🇷 Brasil vs Marruecos 🇲🇦</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO C</span><span>Gillette Stadium · Boston 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">22:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇭🇹 Haití vs Escocia 🏴󠁧󠁢󠁳󠁣󠁴󠁿</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO D</span><span>BC Place · Vancouver 🇨🇦</span></div>
-      <div class="match-body">
-        <div class="match-time">01:00<span class="hs-label">hs†</span></div>
-        <div class="match-teams">🇦🇺 Australia vs Turquía 🇹🇷</div>
-      </div>
-    </div>
-    <div class="madrugada-note">† Madrugada del domingo 14/6</div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Domingo 14 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO E</span><span>NRG Stadium · Houston 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">14:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇩🇪 Alemania vs Curazao 🇨🇼</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO F</span><span>AT&amp;T Stadium · Dallas 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">17:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇳🇱 Países Bajos vs Japón 🇯🇵</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO E</span><span>Lincoln Financial Field · Philadelphia 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">20:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇨🇮 Costa de Marfil vs Ecuador 🇪🇨</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO F</span><span>Estadio BBVA · Monterrey 🇲🇽</span></div>
-      <div class="match-body">
-        <div class="match-time">23:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇸🇪 Suecia vs Túnez 🇹🇳</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Lunes 15 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO H</span><span>Mercedes-Benz Stadium · Atlanta 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">13:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇪🇸 España vs Cabo Verde 🇨🇻</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO G</span><span>Lumen Field · Seattle 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">16:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇧🇪 Bélgica vs Egipto 🇪🇬</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO H</span><span>Hard Rock Stadium · Miami 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">19:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇸🇦 Arabia Saudita vs Uruguay 🇺🇾</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO G</span><span>SoFi Stadium · Los Ángeles 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">22:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇮🇷 Irán vs Nueva Zelanda 🇳🇿</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Martes 16 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO I</span><span>MetLife Stadium · Nueva York/NJ 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">16:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇫🇷 Francia vs Senegal 🇸🇳</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO I</span><span>Gillette Stadium · Boston 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">19:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇮🇶 Irak vs Noruega 🇳🇴</div>
-      </div>
-    </div>
-    <div class="match-card argentina-match">
-      <div class="match-header"><span class="group-badge">GRUPO J</span><span>Arrowhead Stadium · Kansas City 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">22:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇦🇷 ARGENTINA vs Argelia 🇩🇿</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO J</span><span>Levi's Stadium · San Francisco Bay 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">01:00<span class="hs-label">hs†</span></div>
-        <div class="match-teams">🇦🇹 Austria vs Jordania 🇯🇴</div>
-      </div>
-    </div>
-    <div class="madrugada-note">† Madrugada del miércoles 17/6</div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Miércoles 17 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO K</span><span>NRG Stadium · Houston 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">14:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇵🇹 Portugal vs RD Congo 🇨🇩</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO L</span><span>AT&amp;T Stadium · Dallas 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time">17:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra vs Croacia 🇭🇷</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO L</span><span>BMO Field · Toronto 🇨🇦</span></div>
-      <div class="match-body">
-        <div class="match-time">20:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇬🇭 Ghana vs Panamá 🇵🇦</div>
-      </div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO K</span><span>Estadio Azteca · Ciudad de México 🇲🇽</span></div>
-      <div class="match-body">
-        <div class="match-time">23:00<span class="hs-label">hs</span></div>
-        <div class="match-teams">🇺🇿 Uzbekistán vs Colombia 🇨🇴</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== JORNADA 2 ===== -->
-<div id="jornada2" class="section">
-  <p class="jornada-title">Jornada 2 · 18 al 23 de junio</p>
-
-  <div class="day-block">
-    <div class="day-header">Miércoles 18 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO A</span><span>Mercedes-Benz Stadium · Atlanta 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">13:00<span class="hs-label">hs</span></div><div class="match-teams">🇨🇿 Rep. Checa vs Sudáfrica 🇿🇦</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO B</span><span>SoFi Stadium · Los Ángeles 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">🇨🇭 Suiza vs Bosnia y Herz. 🇧🇦</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO B</span><span>BC Place · Vancouver 🇨🇦</span></div>
-      <div class="match-body"><div class="match-time">19:00<span class="hs-label">hs</span></div><div class="match-teams">🇨🇦 Canadá vs Qatar 🇶🇦</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO A</span><span>Estadio Akron · Guadalajara 🇲🇽</span></div>
-      <div class="match-body"><div class="match-time">22:00<span class="hs-label">hs</span></div><div class="match-teams">🇲🇽 México vs Corea del Sur 🇰🇷</div></div>
-    </div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Jueves 19 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO D</span><span>Lumen Field · Seattle 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">🇺🇸 EE.UU. vs Australia 🇦🇺</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO C</span><span>Gillette Stadium · Boston 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">19:00<span class="hs-label">hs</span></div><div class="match-teams">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia vs Marruecos 🇲🇦</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO C</span><span>Lincoln Financial Field · Philadelphia 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">21:30<span class="hs-label">hs</span></div><div class="match-teams">🇧🇷 Brasil vs Haití 🇭🇹</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO D</span><span>Levi's Stadium · San Francisco Bay 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">00:00<span class="hs-label">hs†</span></div><div class="match-teams">🇹🇷 Turquía vs Paraguay 🇵🇾</div></div>
-    </div>
-    <div class="madrugada-note">† Madrugada del viernes 20/6</div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Viernes 20 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO F</span><span>NRG Stadium · Houston 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">14:00<span class="hs-label">hs</span></div><div class="match-teams">🇳🇱 Países Bajos vs Suecia 🇸🇪</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO E</span><span>BMO Field · Toronto 🇨🇦</span></div>
-      <div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">🇩🇪 Alemania vs Costa de Marfil 🇨🇮</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO E</span><span>Arrowhead Stadium · Kansas City 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">21:00<span class="hs-label">hs</span></div><div class="match-teams">🇪🇨 Ecuador vs Curazao 🇨🇼</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO F</span><span>Estadio BBVA · Monterrey 🇲🇽</span></div>
-      <div class="match-body"><div class="match-time">01:00<span class="hs-label">hs†</span></div><div class="match-teams">🇹🇳 Túnez vs Japón 🇯🇵</div></div>
-    </div>
-    <div class="madrugada-note">† Madrugada del sábado 21/6</div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Sábado 21 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO H</span><span>Mercedes-Benz Stadium · Atlanta 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">13:00<span class="hs-label">hs</span></div><div class="match-teams">🇪🇸 España vs Arabia Saudita 🇸🇦</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO G</span><span>SoFi Stadium · Los Ángeles 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">🇧🇪 Bélgica vs Irán 🇮🇷</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO H</span><span>Hard Rock Stadium · Miami 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">19:00<span class="hs-label">hs</span></div><div class="match-teams">🇺🇾 Uruguay vs Cabo Verde 🇨🇻</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO G</span><span>BC Place · Vancouver 🇨🇦</span></div>
-      <div class="match-body"><div class="match-time">22:00<span class="hs-label">hs</span></div><div class="match-teams">🇳🇿 Nueva Zelanda vs Egipto 🇪🇬</div></div>
-    </div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Domingo 22 de junio</div>
-    <div class="match-card argentina-match">
-      <div class="match-header"><span class="group-badge">GRUPO J</span><span>AT&amp;T Stadium · Dallas 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">14:00<span class="hs-label">hs</span></div><div class="match-teams">🇦🇷 ARGENTINA vs Austria 🇦🇹</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO I</span><span>Lincoln Financial Field · Philadelphia 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">18:00<span class="hs-label">hs</span></div><div class="match-teams">🇫🇷 Francia vs Irak 🇮🇶</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO I</span><span>MetLife Stadium · Nueva York/NJ 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">21:00<span class="hs-label">hs</span></div><div class="match-teams">🇳🇴 Noruega vs Senegal 🇸🇳</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO J</span><span>Levi's Stadium · San Francisco Bay 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">00:00<span class="hs-label">hs†</span></div><div class="match-teams">🇯🇴 Jordania vs Argelia 🇩🇿</div></div>
-    </div>
-    <div class="madrugada-note">† Madrugada del lunes 23/6</div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Lunes 23 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO K</span><span>NRG Stadium · Houston 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">14:00<span class="hs-label">hs</span></div><div class="match-teams">🇵🇹 Portugal vs Uzbekistán 🇺🇿</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO L</span><span>Gillette Stadium · Boston 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra vs Ghana 🇬🇭</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO L</span><span>BMO Field · Toronto 🇨🇦</span></div>
-      <div class="match-body"><div class="match-time">20:00<span class="hs-label">hs</span></div><div class="match-teams">🇵🇦 Panamá vs Croacia 🇭🇷</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO K</span><span>Estadio Akron · Guadalajara 🇲🇽</span></div>
-      <div class="match-body"><div class="match-time">23:00<span class="hs-label">hs</span></div><div class="match-teams">🇨🇴 Colombia vs RD Congo 🇨🇩</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== JORNADA 3 ===== -->
-<div id="jornada3" class="section">
-  <p class="jornada-title">Jornada 3 · 24 al 27 de junio · Partidos simultáneos</p>
-
-  <div class="day-block">
-    <div class="day-header">Martes 24 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO B</span><span>BC Place · Vancouver 🇨🇦</span></div>
-      <div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">🇨🇭 Suiza vs Canadá 🇨🇦</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO B</span><span>Lumen Field · Seattle 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">🇧🇦 Bosnia y Herz. vs Qatar 🇶🇦</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO C</span><span>Hard Rock Stadium · Miami 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">19:00<span class="hs-label">hs</span></div><div class="match-teams">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia vs Brasil 🇧🇷</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO C</span><span>Mercedes-Benz Stadium · Atlanta 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">19:00<span class="hs-label">hs</span></div><div class="match-teams">🇲🇦 Marruecos vs Haití 🇭🇹</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO A</span><span>Estadio Azteca · Ciudad de México 🇲🇽</span></div>
-      <div class="match-body"><div class="match-time">22:00<span class="hs-label">hs</span></div><div class="match-teams">🇨🇿 Rep. Checa vs México 🇲🇽</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO A</span><span>Estadio BBVA · Monterrey 🇲🇽</span></div>
-      <div class="match-body"><div class="match-time">22:00<span class="hs-label">hs</span></div><div class="match-teams">🇿🇦 Sudáfrica vs Corea del Sur 🇰🇷</div></div>
-    </div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Miércoles 25 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO E</span><span>Lincoln Financial Field · Philadelphia 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">🇨🇼 Curazao vs Costa de Marfil 🇨🇮</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO E</span><span>MetLife Stadium · Nueva York/NJ 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">🇪🇨 Ecuador vs Alemania 🇩🇪</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO F</span><span>AT&amp;T Stadium · Dallas 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">20:00<span class="hs-label">hs</span></div><div class="match-teams">🇯🇵 Japón vs Suecia 🇸🇪</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO F</span><span>Arrowhead Stadium · Kansas City 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">20:00<span class="hs-label">hs</span></div><div class="match-teams">🇹🇳 Túnez vs Países Bajos 🇳🇱</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO D</span><span>SoFi Stadium · Los Ángeles 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">23:00<span class="hs-label">hs</span></div><div class="match-teams">🇹🇷 Turquía vs EE.UU. 🇺🇸</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO D</span><span>Levi's Stadium · San Francisco Bay 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">23:00<span class="hs-label">hs</span></div><div class="match-teams">🇵🇾 Paraguay vs Australia 🇦🇺</div></div>
-    </div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Jueves 26 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO I</span><span>Gillette Stadium · Boston 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">🇳🇴 Noruega vs Francia 🇫🇷</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO I</span><span>BMO Field · Toronto 🇨🇦</span></div>
-      <div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">🇸🇳 Senegal vs Irak 🇮🇶</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO H</span><span>NRG Stadium · Houston 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">21:00<span class="hs-label">hs</span></div><div class="match-teams">🇨🇻 Cabo Verde vs Arabia Saudita 🇸🇦</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO H</span><span>Estadio Akron · Guadalajara 🇲🇽</span></div>
-      <div class="match-body"><div class="match-time">21:00<span class="hs-label">hs</span></div><div class="match-teams">🇺🇾 Uruguay vs España 🇪🇸</div></div>
-    </div>
-  </div>
-
-  <div class="day-block">
-    <div class="day-header">Viernes 27 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO G</span><span>Lumen Field · Seattle 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">00:00<span class="hs-label">hs</span></div><div class="match-teams">🇪🇬 Egipto vs Irán 🇮🇷</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO G</span><span>BC Place · Vancouver 🇨🇦</span></div>
-      <div class="match-body"><div class="match-time">00:00<span class="hs-label">hs</span></div><div class="match-teams">🇳🇿 Nueva Zelanda vs Bélgica 🇧🇪</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO L</span><span>MetLife Stadium · Nueva York/NJ 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">18:00<span class="hs-label">hs</span></div><div class="match-teams">🇵🇦 Panamá vs Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO L</span><span>Lincoln Financial Field · Philadelphia 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">18:00<span class="hs-label">hs</span></div><div class="match-teams">🇭🇷 Croacia vs Ghana 🇬🇭</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO K</span><span>Hard Rock Stadium · Miami 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">20:30<span class="hs-label">hs</span></div><div class="match-teams">🇨🇴 Colombia vs Portugal 🇵🇹</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO K</span><span>Mercedes-Benz Stadium · Atlanta 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">20:30<span class="hs-label">hs</span></div><div class="match-teams">🇨🇩 RD Congo vs Uzbekistán 🇺🇿</div></div>
-    </div>
-    <div class="match-card argentina-match">
-      <div class="match-header"><span class="group-badge">GRUPO J</span><span>AT&amp;T Stadium · Dallas 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">23:00<span class="hs-label">hs</span></div><div class="match-teams">🇯🇴 Jordania vs ARGENTINA 🇦🇷</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="group-badge">GRUPO J</span><span>Arrowhead Stadium · Kansas City 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">23:00<span class="hs-label">hs</span></div><div class="match-teams">🇩🇿 Argelia vs Austria 🇦🇹</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== ELIMINATORIAS ===== -->
-<div id="eliminatorias" class="section">
-  <p class="jornada-title">Fase eliminatoria · 28 jun — 19 jul</p>
-
-  <!-- RONDA DE 32 -->
-  <div class="day-block">
-    <div class="day-header" style="border-color:#7fc47f;color:#7fc47f">🔵 Ronda de 32 — 28 jun al 3 jul</div>
-
-    <div class="day-header" style="background:#1a2a1a">Sábado 28 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>SoFi Stadium · Los Ángeles 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">2° Grupo A vs 2° Grupo B</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>AT&amp;T Stadium · Dallas 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">19:00<span class="hs-label">hs</span></div><div class="match-teams">2° Grupo E vs 2° Grupo I</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>MetLife Stadium · Nueva York/NJ 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">23:00<span class="hs-label">hs</span></div><div class="match-teams">1° Grupo I vs Mejor 3° (C/D/F/G/H)</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>Estadio BBVA · Monterrey 🇲🇽</span></div>
-      <div class="match-body"><div class="match-time">03:00<span class="hs-label">hs†</span></div><div class="match-teams">1° Grupo F vs 2° Grupo C</div></div>
-    </div>
-    <div class="madrugada-note">† Madrugada del domingo 29/6</div>
-
-    <div class="day-header" style="background:#1a2a1a">Domingo 29 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>NRG Stadium · Houston 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">14:00<span class="hs-label">hs</span></div><div class="match-teams">1° Grupo C vs 2° Grupo F</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>Gillette Stadium · Boston 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">17:30<span class="hs-label">hs</span></div><div class="match-teams">1° Grupo E vs Mejor 3° (A/B/C/D/F)</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>Estadio Azteca · Ciudad de México 🇲🇽</span></div>
-      <div class="match-body"><div class="match-time">22:00<span class="hs-label">hs</span></div><div class="match-teams">1° Grupo A vs Mejor 3° (C/E/F/H/I)</div></div>
-    </div>
-
-    <div class="day-header" style="background:#1a2a1a">Lunes 30 de junio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>Mercedes-Benz Stadium · Atlanta 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">13:00<span class="hs-label">hs</span></div><div class="match-teams">1° Grupo L vs Mejor 3° (E/H/I/J/K)</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>Lumen Field · Seattle 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">1° Grupo G vs Mejor 3° (A/E/H/I/J)</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>Levi's Stadium · San Francisco Bay 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">21:00<span class="hs-label">hs</span></div><div class="match-teams">1° Grupo D vs Mejor 3° (B/E/F/I/J)</div></div>
-    </div>
-
-    <div class="day-header" style="background:#1a2a1a">Martes 1 de julio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>SoFi Stadium · Los Ángeles 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">1° Grupo H vs 2° Grupo J</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>BMO Field · Toronto 🇨🇦</span></div>
-      <div class="match-body"><div class="match-time">20:00<span class="hs-label">hs</span></div><div class="match-teams">2° Grupo K vs 2° Grupo L</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>BC Place · Vancouver 🇨🇦</span></div>
-      <div class="match-body"><div class="match-time">00:00<span class="hs-label">hs†</span></div><div class="match-teams">1° Grupo B vs Mejor 3° (E/F/G/I/J)</div></div>
-    </div>
-    <div class="madrugada-note">† Madrugada del miércoles 2/7</div>
-
-    <div class="day-header" style="background:#1a2a1a">Miércoles 2 de julio</div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>AT&amp;T Stadium · Dallas 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">15:00<span class="hs-label">hs</span></div><div class="match-teams">2° Grupo D vs 2° Grupo G</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>Hard Rock Stadium · Miami 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">19:00<span class="hs-label">hs</span></div><div class="match-teams">1° Grupo J vs 2° Grupo H</div></div>
-    </div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">RONDA 32</span><span>Arrowhead Stadium · Kansas City 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">22:30<span class="hs-label">hs</span></div><div class="match-teams">1° Grupo K vs Mejor 3° (D/E/I/J/L)</div></div>
-    </div>
-  </div>
-
-  <!-- OCTAVOS -->
-  <div class="day-block">
-    <div class="day-header" style="border-color:#ff9944;color:#ff9944">🟡 Octavos de Final — 4 al 7 jul</div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#3a2a10;color:#ff9944">OCTAVOS</span><span>NRG Stadium · Houston · Vie 4/7</span></div><div class="match-body"><div class="match-time">14:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador R32 vs Ganador R32</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#3a2a10;color:#ff9944">OCTAVOS</span><span>Lincoln Financial · Philadelphia · Vie 4/7</span></div><div class="match-body"><div class="match-time">18:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador R32 vs Ganador R32</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#3a2a10;color:#ff9944">OCTAVOS</span><span>MetLife Stadium · Nueva York/NJ · Sáb 5/7</span></div><div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador R32 vs Ganador R32</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#3a2a10;color:#ff9944">OCTAVOS</span><span>Estadio Azteca · México · Sáb 5/7</span></div><div class="match-body"><div class="match-time">21:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador R32 vs Ganador R32</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#3a2a10;color:#ff9944">OCTAVOS</span><span>AT&amp;T Stadium · Dallas · Dom 6/7</span></div><div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador R32 vs Ganador R32</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#3a2a10;color:#ff9944">OCTAVOS</span><span>Lumen Field · Seattle · Dom 6/7</span></div><div class="match-body"><div class="match-time">21:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador R32 vs Ganador R32</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#3a2a10;color:#ff9944">OCTAVOS</span><span>Mercedes-Benz · Atlanta · Lun 7/7</span></div><div class="match-body"><div class="match-time">13:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador R32 vs Ganador R32</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#3a2a10;color:#ff9944">OCTAVOS</span><span>BC Place · Vancouver · Lun 7/7</span></div><div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador R32 vs Ganador R32</div></div></div>
-  </div>
-
-  <!-- CUARTOS -->
-  <div class="day-block">
-    <div class="day-header" style="border-color:#cc55ff;color:#cc55ff">🟣 Cuartos de Final — 9 al 11 jul</div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#2a1a3a;color:#cc55ff">CUARTOS</span><span>Gillette Stadium · Boston · Jue 9/7</span></div><div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador Octavos vs Ganador Octavos</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#2a1a3a;color:#cc55ff">CUARTOS</span><span>SoFi Stadium · Los Ángeles · Vie 10/7</span></div><div class="match-body"><div class="match-time">16:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador Octavos vs Ganador Octavos</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#2a1a3a;color:#cc55ff">CUARTOS</span><span>Hard Rock Stadium · Miami · Sáb 11/7</span></div><div class="match-body"><div class="match-time">18:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador Octavos vs Ganador Octavos</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#2a1a3a;color:#cc55ff">CUARTOS</span><span>Arrowhead Stadium · Kansas City · Sáb 11/7</span></div><div class="match-body"><div class="match-time">22:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador Octavos vs Ganador Octavos</div></div></div>
-  </div>
-
-  <!-- SEMIS -->
-  <div class="day-block">
-    <div class="day-header" style="border-color:#ff4444;color:#ff4444">🔴 Semifinales — 14 y 15 jul</div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#3a1010;color:#ff4444">SEMI</span><span>AT&amp;T Stadium · Dallas · Mar 14/7</span></div><div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador Cuartos vs Ganador Cuartos</div></div></div>
-    <div class="match-card"><div class="match-header"><span class="round-badge" style="background:#3a1010;color:#ff4444">SEMI</span><span>Mercedes-Benz Stadium · Atlanta · Mié 15/7</span></div><div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">Ganador Cuartos vs Ganador Cuartos</div></div></div>
-  </div>
-
-  <!-- 3er PUESTO -->
-  <div class="day-block">
-    <div class="day-header">3er Puesto — Vie 18 jul</div>
-    <div class="match-card">
-      <div class="match-header"><span class="round-badge">3° PUESTO</span><span>Hard Rock Stadium · Miami Gardens 🇺🇸</span></div>
-      <div class="match-body"><div class="match-time">17:00<span class="hs-label">hs</span></div><div class="match-teams">Perdedor Semi vs Perdedor Semi</div></div>
-    </div>
-  </div>
-
-  <!-- FINAL -->
-  <div class="day-block">
-    <div class="day-header" style="border-color:#c9a227;color:#c9a227">🏆 GRAN FINAL — Dom 19 jul</div>
-    <div class="match-card" style="border-color:#c9a227;background:#1a1400">
-      <div class="match-header" style="background:#2a2200"><span class="round-badge" style="background:#c9a227;color:#000">FINAL</span><span>MetLife Stadium · East Rutherford, NJ 🇺🇸</span></div>
-      <div class="match-body">
-        <div class="match-time" style="font-size:1.3rem">16:00<span class="hs-label">hs</span></div>
-        <div class="match-teams" style="font-size:1rem;color:#c9a227">Campeón vs Subcampeón</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<footer>
-  Horarios en Hora de Buenos Aires (ART, UTC-3) · Datos al 31/05/2026<br>
-  Fuentes: FIFA · NBC Sports · Fox Sports · Infobae
-</footer>
-
 <script>
-function showTab(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  event.target.classList.add('active');
+// ── Datos: todos los partidos ──────────────────────────────────────
+// formato: [año, mes-1, día, hora, min, "equipo1", "equipo2", "estadio", "ciudad", "grupo", esArgentina]
+const MATCHES = [
+  // JORNADA 1
+  [2026,5,11,16,0,"🇲🇽 México","🇿🇦 Sudáfrica","Estadio Azteca","Ciudad de México 🇲🇽","A",false],
+  [2026,5,11,23,0,"🇰🇷 Corea del Sur","🇨🇿 Rep. Checa","Estadio Akron","Guadalajara 🇲🇽","A",false],
+  [2026,5,12,16,0,"🇨🇦 Canadá","🇧🇦 Bosnia y Herz.","BMO Field","Toronto 🇨🇦","B",false],
+  [2026,5,12,22,0,"🇺🇸 EE.UU.","🇵🇾 Paraguay","SoFi Stadium","Los Ángeles 🇺🇸","D",false],
+  [2026,5,13,16,0,"🇶🇦 Qatar","🇨🇭 Suiza","Levi's Stadium","San Francisco 🇺🇸","B",false],
+  [2026,5,13,19,0,"🇧🇷 Brasil","🇲🇦 Marruecos","MetLife Stadium","Nueva York/NJ 🇺🇸","C",false],
+  [2026,5,13,22,0,"🇭🇹 Haití","🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia","Gillette Stadium","Boston 🇺🇸","C",false],
+  [2026,5,14,1,0,"🇦🇺 Australia","🇹🇷 Turquía","BC Place","Vancouver 🇨🇦","D",false],
+  [2026,5,14,14,0,"🇩🇪 Alemania","🇨🇼 Curazao","NRG Stadium","Houston 🇺🇸","E",false],
+  [2026,5,14,17,0,"🇳🇱 Países Bajos","🇯🇵 Japón","AT&T Stadium","Dallas 🇺🇸","F",false],
+  [2026,5,14,20,0,"🇨🇮 Costa de Marfil","🇪🇨 Ecuador","Lincoln Financial Field","Philadelphia 🇺🇸","E",false],
+  [2026,5,14,23,0,"🇸🇪 Suecia","🇹🇳 Túnez","Estadio BBVA","Monterrey 🇲🇽","F",false],
+  [2026,5,15,13,0,"🇪🇸 España","🇨🇻 Cabo Verde","Mercedes-Benz Stadium","Atlanta 🇺🇸","H",false],
+  [2026,5,15,16,0,"🇧🇪 Bélgica","🇪🇬 Egipto","Lumen Field","Seattle 🇺🇸","G",false],
+  [2026,5,15,19,0,"🇸🇦 Arabia Saudita","🇺🇾 Uruguay","Hard Rock Stadium","Miami 🇺🇸","H",false],
+  [2026,5,15,22,0,"🇮🇷 Irán","🇳🇿 Nueva Zelanda","SoFi Stadium","Los Ángeles 🇺🇸","G",false],
+  [2026,5,16,16,0,"🇫🇷 Francia","🇸🇳 Senegal","MetLife Stadium","Nueva York/NJ 🇺🇸","I",false],
+  [2026,5,16,19,0,"🇮🇶 Irak","🇳🇴 Noruega","Gillette Stadium","Boston 🇺🇸","I",false],
+  [2026,5,16,22,0,"🇦🇷 Argentina","🇩🇿 Argelia","Arrowhead Stadium","Kansas City 🇺🇸","J",true],
+  [2026,5,17,1,0,"🇦🇹 Austria","🇯🇴 Jordania","Levi's Stadium","San Francisco 🇺🇸","J",false],
+  [2026,5,17,14,0,"🇵🇹 Portugal","🇨🇩 RD Congo","NRG Stadium","Houston 🇺🇸","K",false],
+  [2026,5,17,17,0,"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra","🇭🇷 Croacia","AT&T Stadium","Dallas 🇺🇸","L",false],
+  [2026,5,17,20,0,"🇬🇭 Ghana","🇵🇦 Panamá","BMO Field","Toronto 🇨🇦","L",false],
+  [2026,5,17,23,0,"🇺🇿 Uzbekistán","🇨🇴 Colombia","Estadio Azteca","Ciudad de México 🇲🇽","K",false],
+  // JORNADA 2
+  [2026,5,18,13,0,"🇨🇿 Rep. Checa","🇿🇦 Sudáfrica","Mercedes-Benz Stadium","Atlanta 🇺🇸","A",false],
+  [2026,5,18,16,0,"🇨🇭 Suiza","🇧🇦 Bosnia y Herz.","SoFi Stadium","Los Ángeles 🇺🇸","B",false],
+  [2026,5,18,19,0,"🇨🇦 Canadá","🇶🇦 Qatar","BC Place","Vancouver 🇨🇦","B",false],
+  [2026,5,18,22,0,"🇲🇽 México","🇰🇷 Corea del Sur","Estadio Akron","Guadalajara 🇲🇽","A",false],
+  [2026,5,19,16,0,"🇺🇸 EE.UU.","🇦🇺 Australia","Lumen Field","Seattle 🇺🇸","D",false],
+  [2026,5,19,19,0,"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia","🇲🇦 Marruecos","Gillette Stadium","Boston 🇺🇸","C",false],
+  [2026,5,19,21,30,"🇧🇷 Brasil","🇭🇹 Haití","Lincoln Financial Field","Philadelphia 🇺🇸","C",false],
+  [2026,5,20,0,0,"🇹🇷 Turquía","🇵🇾 Paraguay","Levi's Stadium","San Francisco 🇺🇸","D",false],
+  [2026,5,20,14,0,"🇳🇱 Países Bajos","🇸🇪 Suecia","NRG Stadium","Houston 🇺🇸","F",false],
+  [2026,5,20,17,0,"🇩🇪 Alemania","🇨🇮 Costa de Marfil","BMO Field","Toronto 🇨🇦","E",false],
+  [2026,5,20,21,0,"🇪🇨 Ecuador","🇨🇼 Curazao","Arrowhead Stadium","Kansas City 🇺🇸","E",false],
+  [2026,5,21,1,0,"🇹🇳 Túnez","🇯🇵 Japón","Estadio BBVA","Monterrey 🇲🇽","F",false],
+  [2026,5,21,13,0,"🇪🇸 España","🇸🇦 Arabia Saudita","Mercedes-Benz Stadium","Atlanta 🇺🇸","H",false],
+  [2026,5,21,16,0,"🇧🇪 Bélgica","🇮🇷 Irán","SoFi Stadium","Los Ángeles 🇺🇸","G",false],
+  [2026,5,21,19,0,"🇺🇾 Uruguay","🇨🇻 Cabo Verde","Hard Rock Stadium","Miami 🇺🇸","H",false],
+  [2026,5,21,22,0,"🇳🇿 Nueva Zelanda","🇪🇬 Egipto","BC Place","Vancouver 🇨🇦","G",false],
+  [2026,5,22,14,0,"🇦🇷 Argentina","🇦🇹 Austria","AT&T Stadium","Dallas 🇺🇸","J",true],
+  [2026,5,22,18,0,"🇫🇷 Francia","🇮🇶 Irak","Lincoln Financial Field","Philadelphia 🇺🇸","I",false],
+  [2026,5,22,21,0,"🇳🇴 Noruega","🇸🇳 Senegal","MetLife Stadium","Nueva York/NJ 🇺🇸","I",false],
+  [2026,5,23,0,0,"🇯🇴 Jordania","🇩🇿 Argelia","Levi's Stadium","San Francisco 🇺🇸","J",false],
+  [2026,5,23,14,0,"🇵🇹 Portugal","🇺🇿 Uzbekistán","NRG Stadium","Houston 🇺🇸","K",false],
+  [2026,5,23,17,0,"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra","🇬🇭 Ghana","Gillette Stadium","Boston 🇺🇸","L",false],
+  [2026,5,23,20,0,"🇵🇦 Panamá","🇭🇷 Croacia","BMO Field","Toronto 🇨🇦","L",false],
+  [2026,5,23,23,0,"🇨🇴 Colombia","🇨🇩 RD Congo","Estadio Akron","Guadalajara 🇲🇽","K",false],
+  // JORNADA 3
+  [2026,5,24,16,0,"🇨🇭 Suiza","🇨🇦 Canadá","BC Place","Vancouver 🇨🇦","B",false],
+  [2026,5,24,16,0,"🇧🇦 Bosnia y Herz.","🇶🇦 Qatar","Lumen Field","Seattle 🇺🇸","B",false],
+  [2026,5,24,19,0,"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia","🇧🇷 Brasil","Hard Rock Stadium","Miami 🇺🇸","C",false],
+  [2026,5,24,19,0,"🇲🇦 Marruecos","🇭🇹 Haití","Mercedes-Benz Stadium","Atlanta 🇺🇸","C",false],
+  [2026,5,24,22,0,"🇨🇿 Rep. Checa","🇲🇽 México","Estadio Azteca","Ciudad de México 🇲🇽","A",false],
+  [2026,5,24,22,0,"🇿🇦 Sudáfrica","🇰🇷 Corea del Sur","Estadio BBVA","Monterrey 🇲🇽","A",false],
+  [2026,5,25,17,0,"🇨🇼 Curazao","🇨🇮 Costa de Marfil","Lincoln Financial Field","Philadelphia 🇺🇸","E",false],
+  [2026,5,25,17,0,"🇪🇨 Ecuador","🇩🇪 Alemania","MetLife Stadium","Nueva York/NJ 🇺🇸","E",false],
+  [2026,5,25,20,0,"🇯🇵 Japón","🇸🇪 Suecia","AT&T Stadium","Dallas 🇺🇸","F",false],
+  [2026,5,25,20,0,"🇹🇳 Túnez","🇳🇱 Países Bajos","Arrowhead Stadium","Kansas City 🇺🇸","F",false],
+  [2026,5,25,23,0,"🇹🇷 Turquía","🇺🇸 EE.UU.","SoFi Stadium","Los Ángeles 🇺🇸","D",false],
+  [2026,5,25,23,0,"🇵🇾 Paraguay","🇦🇺 Australia","Levi's Stadium","San Francisco 🇺🇸","D",false],
+  [2026,5,26,16,0,"🇳🇴 Noruega","🇫🇷 Francia","Gillette Stadium","Boston 🇺🇸","I",false],
+  [2026,5,26,16,0,"🇸🇳 Senegal","🇮🇶 Irak","BMO Field","Toronto 🇨🇦","I",false],
+  [2026,5,26,21,0,"🇨🇻 Cabo Verde","🇸🇦 Arabia Saudita","NRG Stadium","Houston 🇺🇸","H",false],
+  [2026,5,26,21,0,"🇺🇾 Uruguay","🇪🇸 España","Estadio Akron","Guadalajara 🇲🇽","H",false],
+  [2026,5,27,0,0,"🇪🇬 Egipto","🇮🇷 Irán","Lumen Field","Seattle 🇺🇸","G",false],
+  [2026,5,27,0,0,"🇳🇿 Nueva Zelanda","🇧🇪 Bélgica","BC Place","Vancouver 🇨🇦","G",false],
+  [2026,5,27,18,0,"🇵🇦 Panamá","🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra","MetLife Stadium","Nueva York/NJ 🇺🇸","L",false],
+  [2026,5,27,18,0,"🇭🇷 Croacia","🇬🇭 Ghana","Lincoln Financial Field","Philadelphia 🇺🇸","L",false],
+  [2026,5,27,20,30,"🇨🇴 Colombia","🇵🇹 Portugal","Hard Rock Stadium","Miami 🇺🇸","K",false],
+  [2026,5,27,20,30,"🇨🇩 RD Congo","🇺🇿 Uzbekistán","Mercedes-Benz Stadium","Atlanta 🇺🇸","K",false],
+  [2026,5,27,23,0,"🇯🇴 Jordania","🇦🇷 Argentina","AT&T Stadium","Dallas 🇺🇸","J",true],
+  [2026,5,27,23,0,"🇩🇿 Argelia","🇦🇹 Austria","Arrowhead Stadium","Kansas City 🇺🇸","J",false],
+  // RONDA DE 32
+  [2026,5,28,16,0,"2° Grupo A","2° Grupo B","SoFi Stadium","Los Ángeles 🇺🇸","32vos",false],
+  [2026,5,28,19,0,"2° Grupo E","2° Grupo I","AT&T Stadium","Dallas 🇺🇸","32vos",false],
+  [2026,5,28,23,0,"1° Grupo I","Mejor 3° (C/D/F/G/H)","MetLife Stadium","Nueva York/NJ 🇺🇸","32vos",false],
+  [2026,5,29,3,0,"1° Grupo F","2° Grupo C","Estadio BBVA","Monterrey 🇲🇽","32vos",false],
+  [2026,5,29,14,0,"1° Grupo C","2° Grupo F","NRG Stadium","Houston 🇺🇸","32vos",false],
+  [2026,5,29,17,30,"1° Grupo E","Mejor 3° (A/B/C/D/F)","Gillette Stadium","Boston 🇺🇸","32vos",false],
+  [2026,5,29,22,0,"1° Grupo A","Mejor 3° (C/E/F/H/I)","Estadio Azteca","Ciudad de México 🇲🇽","32vos",false],
+  [2026,5,30,13,0,"1° Grupo L","Mejor 3° (E/H/I/J/K)","Mercedes-Benz Stadium","Atlanta 🇺🇸","32vos",false],
+  [2026,5,30,17,0,"1° Grupo G","Mejor 3° (A/E/H/I/J)","Lumen Field","Seattle 🇺🇸","32vos",false],
+  [2026,5,30,21,0,"1° Grupo D","Mejor 3° (B/E/F/I/J)","Levi's Stadium","San Francisco 🇺🇸","32vos",false],
+  [2026,6,1,16,0,"1° Grupo H","2° Grupo J","SoFi Stadium","Los Ángeles 🇺🇸","32vos",false],
+  [2026,6,1,20,0,"2° Grupo K","2° Grupo L","BMO Field","Toronto 🇨🇦","32vos",false],
+  [2026,6,2,0,0,"1° Grupo B","Mejor 3° (E/F/G/I/J)","BC Place","Vancouver 🇨🇦","32vos",false],
+  [2026,6,2,15,0,"2° Grupo D","2° Grupo G","AT&T Stadium","Dallas 🇺🇸","32vos",false],
+  [2026,6,2,19,0,"1° Grupo J","2° Grupo H","Hard Rock Stadium","Miami 🇺🇸","32vos",false],
+  [2026,6,2,22,30,"1° Grupo K","Mejor 3° (D/E/I/J/L)","Arrowhead Stadium","Kansas City 🇺🇸","32vos",false],
+  // OCTAVOS
+  [2026,6,4,14,0,"Ganador R32","Ganador R32","NRG Stadium","Houston 🇺🇸","Octavos",false],
+  [2026,6,4,18,0,"Ganador R32","Ganador R32","Lincoln Financial Field","Philadelphia 🇺🇸","Octavos",false],
+  [2026,6,5,17,0,"Ganador R32","Ganador R32","MetLife Stadium","Nueva York/NJ 🇺🇸","Octavos",false],
+  [2026,6,5,21,0,"Ganador R32","Ganador R32","Estadio Azteca","Ciudad de México 🇲🇽","Octavos",false],
+  [2026,6,6,16,0,"Ganador R32","Ganador R32","AT&T Stadium","Dallas 🇺🇸","Octavos",false],
+  [2026,6,6,21,0,"Ganador R32","Ganador R32","Lumen Field","Seattle 🇺🇸","Octavos",false],
+  [2026,6,7,13,0,"Ganador R32","Ganador R32","Mercedes-Benz Stadium","Atlanta 🇺🇸","Octavos",false],
+  [2026,6,7,17,0,"Ganador R32","Ganador R32","BC Place","Vancouver 🇨🇦","Octavos",false],
+  // CUARTOS
+  [2026,6,9,17,0,"Ganador Octavos","Ganador Octavos","Gillette Stadium","Boston 🇺🇸","Cuartos",false],
+  [2026,6,10,16,0,"Ganador Octavos","Ganador Octavos","SoFi Stadium","Los Ángeles 🇺🇸","Cuartos",false],
+  [2026,6,11,18,0,"Ganador Octavos","Ganador Octavos","Hard Rock Stadium","Miami 🇺🇸","Cuartos",false],
+  [2026,6,11,22,0,"Ganador Octavos","Ganador Octavos","Arrowhead Stadium","Kansas City 🇺🇸","Cuartos",false],
+  // SEMIS
+  [2026,6,14,17,0,"Ganador Cuartos","Ganador Cuartos","AT&T Stadium","Dallas 🇺🇸","Semis",false],
+  [2026,6,15,17,0,"Ganador Cuartos","Ganador Cuartos","Mercedes-Benz Stadium","Atlanta 🇺🇸","Semis",false],
+  // 3ER PUESTO
+  [2026,6,18,17,0,"3er puesto","3er puesto","Hard Rock Stadium","Miami 🇺🇸","3° Puesto",false],
+  // FINAL
+  [2026,6,19,16,0,"🏆 Campeón","🏆 Subcampeón","MetLife Stadium","Nueva York/NJ 🇺🇸","Final",false],
+];
+
+// Nombres de días y meses en español
+const DIAS = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const MESES_CORTOS = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+
+function matchDate(m) { return new Date(m[0], m[1], m[2], m[3], m[4]); }
+
+function formatTime(h, min) {
+  return String(h).padStart(2,'0') + ':' + String(min).padStart(2,'0');
 }
+
+function dayKey(m) { return `${m[0]}-${m[1]}-${m[2]}`; }
+
+function friendlyDay(d) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diff = Math.round((target - today) / 86400000);
+  if (diff === 0) return '<span class="today-tag">HOY</span>';
+  if (diff === 1) return '<span class="tomorrow-tag">MAÑANA</span>';
+  return '';
+}
+
+function groupLabel(g) {
+  if (g.startsWith('Gr')) return 'elim';
+  if (['32vos','Octavos','Cuartos','Semis','3° Puesto','Final'].includes(g)) return 'elim';
+  return '';
+}
+
+// ── Construir el calendario ────────────────────────────────────────
+let currentFilter = 'todos';
+
+function buildCalendar(filter) {
+  const container = document.getElementById('matches-container');
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Agrupar por día
+  const byDay = {};
+  for (const m of MATCHES) {
+    if (filter === 'argentina' && !m[10]) continue;
+    const k = dayKey(m);
+    if (!byDay[k]) byDay[k] = [];
+    byDay[k].push(m);
+  }
+
+  if (Object.keys(byDay).length === 0) {
+    container.innerHTML = '<div class="no-results">No hay partidos de Argentina este día.</div>';
+    return;
+  }
+
+  let html = '';
+  let scrollToId = null;
+
+  for (const k of Object.keys(byDay).sort()) {
+    const [y,mo,d] = k.split('-').map(Number);
+    const date = new Date(y, mo, d);
+    const dayLabel = `${DIAS[date.getDay()]} ${d} de ${MESES[mo]}`;
+    const tag = friendlyDay(date);
+    const sectionId = 'day-' + k;
+
+    // Marcar hoy para scroll
+    if (!scrollToId && date >= today) scrollToId = sectionId;
+
+    html += `<div class="day-section" id="${sectionId}">
+      <div class="day-header">${dayLabel} ${tag}</div>`;
+
+    for (const m of byDay[k]) {
+      const isArg = m[10];
+      const isMidnight = (m[3] === 0 && m[4] === 0);
+      const timeStr = formatTime(m[3], m[4]);
+      const badge = m[9];
+      const badgeClass = isArg ? 'gr-badge arg' : (groupLabel(badge) ? 'gr-badge elim' : 'gr-badge');
+
+      html += `<div class="match-card ${isArg ? 'arg-card' : ''}">
+        <div class="time">${timeStr}${isMidnight ? '<span class="midnight">madrugada</span>' : ''}</div>
+        <div class="info">
+          <div class="teams ${isArg ? 'arg-teams' : ''}">${m[5]} vs ${m[6]}</div>
+          <div class="venue-line">${m[7]} · ${m[8]}</div>
+        </div>
+        <div class="${badgeClass}">${badge}</div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+
+  // Scroll al primer día próximo
+  if (scrollToId) {
+    setTimeout(() => {
+      const el = document.getElementById(scrollToId);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  }
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildCalendar(f);
+}
+
+// ── Próximo partido de Argentina ───────────────────────────────────
+function buildNextArgCard() {
+  const now = new Date();
+  const argMatches = MATCHES.filter(m => m[10]);
+  let next = null;
+  for (const m of argMatches) {
+    if (matchDate(m) > now) { next = m; break; }
+  }
+
+  const container = document.getElementById('next-card');
+  if (!next) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const d = matchDate(next);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const daysLeft = Math.ceil((new Date(d.getFullYear(),d.getMonth(),d.getDate()) - today) / 86400000);
+  let countdown = '';
+  if (daysLeft === 0) countdown = '¡HOY JUEGA ARGENTINA! 🎉';
+  else if (daysLeft === 1) countdown = '¡MAÑANA juega Argentina!';
+  else countdown = `Faltan ${daysLeft} días`;
+
+  const dayName = DIAS[d.getDay()];
+  const dateStr = `${dayName} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+  const timeStr = formatTime(next[3], next[4]);
+
+  container.innerHTML = `
+    <div class="next-match-card">
+      <div class="card-label">Próximo partido</div>
+      <div class="countdown">${countdown}</div>
+      <div class="teams">${next[5]}<br>vs<br>${next[6]}</div>
+      <div class="time-big">${timeStr} <span style="font-size:1rem;opacity:.7">hs</span></div>
+      <div class="time-label">Hora de Buenos Aires</div>
+      <div style="height:10px"></div>
+      <div class="match-meta">
+        <div class="meta-item">📅 ${dateStr}</div>
+        <div class="meta-item">🏟 ${next[7]}</div>
+        <div class="meta-item">📍 ${next[8]}</div>
+      </div>
+    </div>`;
+}
+
+// ── Navegación ─────────────────────────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'cal') buildCalendar(currentFilter);
+  window.scrollTo(0, 0);
+}
+
+// ── Init ───────────────────────────────────────────────────────────
+buildNextArgCard();
+buildCalendar('todos'); // pre-build so it's fast when user opens it
+
+// Actualizar countdown cada minuto
+setInterval(buildNextArgCard, 60000);
 </script>
 </body>
 </html>
