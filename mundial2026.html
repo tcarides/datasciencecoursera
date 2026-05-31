@@ -3,589 +3,525 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Mundial 2026 🌎</title>
+<title>Mundial 2026 ⚽</title>
 <style>
-/* ── Base ── */
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-       background: #f0f2f5; color: #1a1a1a; font-size: 16px; padding-bottom: 72px; }
+/* ── Tabs via CSS (sin depender de JS) ── */
+#r-arg, #r-cal, #r-grupos { display:none; }
+
+/* Tabs ocultos por defecto */
+#tab-arg, #tab-cal, #tab-grupos { display:none; }
+
+/* Mostrar tab según radio seleccionado */
+#r-arg:checked   ~ main #tab-arg   { display:block; }
+#r-cal:checked   ~ main #tab-cal   { display:block; }
+#r-grupos:checked ~ main #tab-grupos { display:block; }
+
+/* Nav activo */
+#r-arg:checked   ~ nav label[for="r-arg"]    { color:#1d3557; font-weight:800; }
+#r-cal:checked   ~ nav label[for="r-cal"]    { color:#1d3557; font-weight:800; }
+#r-grupos:checked ~ nav label[for="r-grupos"] { color:#1d3557; font-weight:800; }
+
+#r-arg:checked   ~ nav label[for="r-arg"]   .icon { transform:scale(1.15); }
+#r-cal:checked   ~ nav label[for="r-cal"]   .icon { transform:scale(1.15); }
+#r-grupos:checked ~ nav label[for="r-grupos"] .icon { transform:scale(1.15); }
+
+/* ── Reset ── */
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+       background:#f0f2f5; color:#1a1a1a; font-size:16px; padding-bottom:72px; }
 
 /* ── Header ── */
-.header { background: #1d3557; color: white; padding: 14px 16px 12px;
-          display: flex; align-items: center; justify-content: space-between;
-          position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
-.header h1 { font-size: 1.15rem; font-weight: 700; }
-.header .sub { font-size: 0.7rem; color: rgba(255,255,255,.65); margin-top: 2px; }
-.tz-chip { background: #e8c53a; color: #1a1a1a; font-size: 0.65rem; font-weight: 700;
-           padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+header { background:#1d3557; color:white; padding:14px 16px 10px;
+         display:flex; align-items:center; justify-content:space-between;
+         position:sticky; top:0; z-index:40; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+header h1 { font-size:1.15rem; font-weight:700; }
+header p  { font-size:0.7rem; color:rgba(255,255,255,.65); margin-top:2px; }
+.chip { background:#e8c53a; color:#1a1a1a; font-size:0.65rem; font-weight:700;
+        padding:3px 9px; border-radius:20px; white-space:nowrap; }
+
+/* ── Main ── */
+main { padding:14px; }
 
 /* ── Bottom Nav ── */
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-              background: white; border-top: 1px solid #e0e0e0;
-              display: flex; height: 62px; box-shadow: 0 -2px 10px rgba(0,0,0,.08); }
-.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center;
-           justify-content: center; gap: 3px; background: none; border: none;
-           font-size: 0.65rem; color: #888; cursor: pointer; padding: 6px 0;
-           transition: color .2s; }
-.nav-btn .icon { font-size: 1.4rem; }
-.nav-btn.active { color: #1d3557; font-weight: 700; }
-.nav-btn.active .icon { transform: scale(1.1); }
+nav { position:fixed; bottom:0; left:0; right:0; z-index:40;
+      background:white; border-top:1px solid #ddd;
+      display:flex; height:62px; box-shadow:0 -2px 10px rgba(0,0,0,.08); }
+nav label { flex:1; display:flex; flex-direction:column; align-items:center;
+            justify-content:center; gap:3px; cursor:pointer;
+            font-size:0.65rem; color:#999; transition:color .15s; padding:6px 0; }
+nav label .icon { font-size:1.4rem; display:block; transition:transform .15s; }
 
-/* ── Tabs ── */
-.tab { display: none; padding: 14px 14px 10px; }
-.tab.active { display: block; }
+/* ── Cards base ── */
+.card { background:white; border-radius:12px; box-shadow:0 1px 5px rgba(0,0,0,.08); }
 
-/* ── Argentina Tab ── */
-.next-match-card {
-  background: linear-gradient(135deg, #1d3557 0%, #2566a0 100%);
-  color: white; border-radius: 16px; padding: 18px 18px 16px;
-  margin-bottom: 16px; box-shadow: 0 4px 16px rgba(29,53,87,.3);
-}
-.next-match-card .card-label { font-size: 0.7rem; text-transform: uppercase;
-  letter-spacing: 1px; opacity: .7; margin-bottom: 10px; }
-.next-match-card .countdown { font-size: 0.85rem; background: rgba(255,255,255,.15);
-  display: inline-block; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; }
-.next-match-card .teams { font-size: 1.5rem; font-weight: 800; line-height: 1.2;
-  margin-bottom: 12px; }
-.next-match-card .match-meta { display: flex; flex-direction: column; gap: 5px; }
-.next-match-card .meta-item { display: flex; align-items: center; gap: 7px;
-  font-size: 0.85rem; opacity: .9; }
-.next-match-card .time-big { font-size: 2rem; font-weight: 900; color: #e8c53a;
-  line-height: 1; margin-bottom: 4px; }
-.next-match-card .time-label { font-size: 0.7rem; opacity: .7; }
+/* ── Argentina tab ── */
+.next-card { background:linear-gradient(135deg,#1d3557,#2566a0);
+             color:white; border-radius:16px; padding:18px;
+             margin-bottom:16px; box-shadow:0 4px 16px rgba(29,53,87,.3); }
+.next-card .lbl { font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; opacity:.7; margin-bottom:8px; }
+.next-card .cd  { font-size:0.85rem; background:rgba(255,255,255,.15);
+                  display:inline-block; padding:3px 12px; border-radius:20px; margin-bottom:12px; }
+.next-card .teams { font-size:1.45rem; font-weight:800; line-height:1.25; margin-bottom:14px; }
+.next-card .hs  { font-size:2rem; font-weight:900; color:#e8c53a; line-height:1; }
+.next-card .hs-label { font-size:0.7rem; opacity:.7; margin-bottom:12px; }
+.next-card .meta { font-size:0.85rem; opacity:.9; display:flex; flex-direction:column; gap:5px; }
 
-.section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
-  color: #888; font-weight: 700; margin: 0 0 10px; }
+.sec-title { font-size:0.72rem; text-transform:uppercase; letter-spacing:1px;
+             color:#888; font-weight:700; margin:0 0 10px; }
+.group-pill { background:#1d3557; color:white; font-size:0.7rem; font-weight:700;
+              padding:3px 12px; border-radius:20px; display:inline-block; margin-bottom:12px; }
 
-.arg-match-card { background: white; border-radius: 12px; padding: 14px 16px;
-  margin-bottom: 10px; border-left: 4px solid #74b9ff; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
-.arg-match-card .match-date { font-size: 0.72rem; color: #888; margin-bottom: 6px; font-weight: 600; }
-.arg-match-card .match-teams-row { display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 8px; }
-.arg-match-card .team-name { font-size: 1.05rem; font-weight: 700; }
-.arg-match-card .team-name.arg { color: #1d3557; }
-.arg-match-card .vs { font-size: 0.75rem; color: #aaa; font-weight: 600; padding: 0 6px; }
-.arg-match-card .time-venue { display: flex; justify-content: space-between;
-  align-items: center; }
-.arg-match-card .time-badge { background: #1d3557; color: white; font-size: 0.9rem;
-  font-weight: 800; padding: 4px 12px; border-radius: 20px; }
-.arg-match-card .venue { font-size: 0.72rem; color: #888; text-align: right; }
-.arg-match-card.played { border-left-color: #b2bec3; opacity: .7; }
-.arg-match-card.next { border-left-color: #e8c53a; }
+.arg-card { padding:14px 16px; margin-bottom:10px; border-left:4px solid #74b9ff; }
+.arg-card.next-match { border-left-color:#e8c53a; }
+.arg-card .date { font-size:0.72rem; color:#888; font-weight:600; margin-bottom:6px; }
+.arg-card .row  { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.arg-card .team { font-size:1.05rem; font-weight:700; }
+.arg-card .team.blue { color:#1d3557; }
+.arg-card .vs   { font-size:0.75rem; color:#bbb; font-weight:600; padding:0 6px; }
+.arg-card .bot  { display:flex; justify-content:space-between; align-items:center; }
+.arg-card .badge{ background:#1d3557; color:white; font-size:0.9rem; font-weight:800;
+                  padding:4px 14px; border-radius:20px; }
+.arg-card .venue{ font-size:0.72rem; color:#888; text-align:right; line-height:1.4; }
 
-.info-card { background: white; border-radius: 12px; padding: 14px 16px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 10px; }
-.info-card h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
-  color: #888; font-weight: 700; margin-bottom: 10px; }
-.info-row { display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
-.info-row:last-child { border-bottom: none; }
-.info-row .val { font-weight: 700; text-align: right; }
-.group-pill { background: #1d3557; color: white; font-size: 0.7rem; font-weight: 700;
-  padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 14px; }
+.info-card { padding:14px 16px; margin-top:10px; }
+.info-card h3 { font-size:0.72rem; text-transform:uppercase; letter-spacing:1px;
+                color:#888; font-weight:700; margin-bottom:10px; }
+.info-row { display:flex; justify-content:space-between; align-items:center;
+            padding:8px 0; border-bottom:1px solid #f0f0f0; font-size:0.9rem; }
+.info-row:last-child { border-bottom:none; }
+.info-row b { text-align:right; }
 
-/* ── Partidos Tab ── */
-.filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px;
-  scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-.filter-bar::-webkit-scrollbar { display: none; }
-.filter-btn { flex-shrink: 0; background: white; border: 2px solid #e0e0e0;
-  border-radius: 20px; padding: 7px 16px; font-size: 0.82rem; font-weight: 600;
-  color: #666; cursor: pointer; white-space: nowrap; transition: all .2s; }
-.filter-btn.active { background: #1d3557; border-color: #1d3557; color: white; }
+/* ── Partidos tab ── */
+.filter-bar { display:flex; gap:8px; overflow-x:auto; padding-bottom:12px;
+              scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+.filter-bar::-webkit-scrollbar { display:none; }
+.fbtn { flex-shrink:0; background:white; border:2px solid #ddd;
+        border-radius:20px; padding:7px 16px; font-size:0.82rem; font-weight:600;
+        color:#666; cursor:pointer; white-space:nowrap; transition:all .2s; }
+.fbtn.on { background:#1d3557; border-color:#1d3557; color:white; }
 
-.day-section { margin-bottom: 18px; }
-.day-header { font-size: 0.8rem; font-weight: 800; color: #1d3557;
-  text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 4px 8px;
-  display: flex; align-items: center; gap: 8px; }
-.day-header .today-tag { background: #e8c53a; color: #1a1a1a; font-size: 0.65rem;
-  font-weight: 800; padding: 2px 8px; border-radius: 10px; }
-.day-header .tomorrow-tag { background: #74b9ff; color: #1a1a1a; font-size: 0.65rem;
-  font-weight: 800; padding: 2px 8px; border-radius: 10px; }
+.day-block { margin-bottom:18px; }
+.day-hdr { font-size:0.8rem; font-weight:800; color:#1d3557; text-transform:uppercase;
+           letter-spacing:.5px; padding:6px 4px 8px; display:flex; align-items:center; gap:8px; }
+.tag-hoy { background:#e8c53a; color:#1a1a1a; font-size:0.65rem; font-weight:800;
+           padding:2px 8px; border-radius:10px; }
+.tag-man { background:#74b9ff; color:#1a1a1a; font-size:0.65rem; font-weight:800;
+           padding:2px 8px; border-radius:10px; }
 
-.match-card { background: white; border-radius: 12px; padding: 12px 14px;
-  margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.07);
-  display: flex; align-items: center; gap: 12px; }
-.match-card.arg-card { border-left: 4px solid #e8c53a; background: #fffdf0; }
-.match-card .time { font-size: 1.1rem; font-weight: 800; color: #1d3557;
-  min-width: 52px; text-align: center; line-height: 1; }
-.match-card .time .midnight { font-size: 0.62rem; color: #aaa; display: block; margin-top: 2px; }
-.match-card .info { flex: 1; min-width: 0; }
-.match-card .teams { font-size: 0.95rem; font-weight: 700;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.match-card .teams.arg-teams { color: #1d3557; }
-.match-card .venue-line { font-size: 0.7rem; color: #aaa; margin-top: 3px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.match-card .gr-badge { font-size: 0.65rem; font-weight: 700; color: white;
-  background: #636e72; padding: 2px 7px; border-radius: 8px; white-space: nowrap; flex-shrink: 0; }
-.match-card .gr-badge.arg { background: #1d3557; }
-.match-card .gr-badge.elim { background: #6c5ce7; }
+.m-card { background:white; border-radius:12px; padding:12px 14px; margin-bottom:7px;
+          box-shadow:0 1px 4px rgba(0,0,0,.07); display:flex; align-items:center; gap:12px; }
+.m-card.arg { border-left:4px solid #e8c53a; background:#fffdf0; }
+.m-card .hs { font-size:1.1rem; font-weight:800; color:#1d3557;
+              min-width:52px; text-align:center; line-height:1; }
+.m-card .hs small { font-size:0.58rem; color:#aaa; display:block; margin-top:2px; }
+.m-card .inf { flex:1; min-width:0; }
+.m-card .teams { font-size:0.95rem; font-weight:700;
+                 white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.m-card .teams.arg { color:#1d3557; }
+.m-card .ven { font-size:0.7rem; color:#aaa; margin-top:3px;
+               white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.m-card .gr { font-size:0.62rem; font-weight:700; color:white; padding:2px 7px;
+              border-radius:8px; white-space:nowrap; flex-shrink:0; }
+.m-card .gr.g  { background:#636e72; }
+.m-card .gr.a  { background:#1d3557; }
+.m-card .gr.e  { background:#6c5ce7; }
 
-.no-results { text-align: center; padding: 30px; color: #aaa; font-size: 0.9rem; }
+.no-res { text-align:center; padding:32px; color:#aaa; font-size:0.9rem; }
 
-/* ── Grupos Tab ── */
-.groups-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.group-card { background: white; border-radius: 12px; overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,.07); }
-.group-title { background: #1d3557; color: white; padding: 8px 12px;
-  font-size: 0.8rem; font-weight: 800; text-align: center; letter-spacing: 1px; }
-.group-team { padding: 9px 12px; font-size: 0.85rem; border-bottom: 1px solid #f5f5f5;
-  display: flex; align-items: center; gap: 6px; }
-.group-team:last-child { border-bottom: none; }
-.group-team.arg { background: #f0f6ff; color: #1d3557; font-weight: 800; }
+/* ── Grupos tab ── */
+.g-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.g-card { background:white; border-radius:12px; overflow:hidden;
+          box-shadow:0 1px 4px rgba(0,0,0,.07); }
+.g-title { background:#1d3557; color:white; padding:8px 12px;
+           font-size:0.8rem; font-weight:800; text-align:center; letter-spacing:1px; }
+.g-team { padding:9px 12px; font-size:0.85rem; border-bottom:1px solid #f5f5f5;
+          display:flex; align-items:center; gap:6px; }
+.g-team:last-child { border-bottom:none; }
+.g-team.arg { background:#f0f6ff; color:#1d3557; font-weight:800; }
 
-/* ── Eliminatorias section ── */
-.elim-stage { background: white; border-radius: 12px; padding: 14px 16px;
-  margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
-.elim-stage h3 { font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
-  letter-spacing: 1px; margin-bottom: 10px; }
-.elim-match { display: flex; align-items: center; gap: 12px; padding: 9px 0;
-  border-bottom: 1px solid #f5f5f5; }
-.elim-match:last-child { border-bottom: none; }
-.elim-match .e-time { font-size: 1rem; font-weight: 800; color: #1d3557;
-  min-width: 50px; text-align: center; }
-.elim-match .e-info { flex: 1; }
-.elim-match .e-desc { font-size: 0.88rem; font-weight: 600; }
-.elim-match .e-venue { font-size: 0.7rem; color: #aaa; margin-top: 2px; }
-
-.final-card { background: linear-gradient(135deg, #b8860b, #e8c53a);
-  color: #1a1a1a; border-radius: 14px; padding: 18px; margin-bottom: 12px;
-  text-align: center; box-shadow: 0 4px 14px rgba(232,197,58,.4); }
-.final-card .f-label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
-  letter-spacing: 1px; opacity: .7; }
-.final-card .f-date { font-size: 1.2rem; font-weight: 900; margin: 6px 0; }
-.final-card .f-time { font-size: 2rem; font-weight: 900; }
-.final-card .f-venue { font-size: 0.82rem; margin-top: 6px; opacity: .8; }
-
-/* ── Utility ── */
-.hidden { display: none !important; }
+/* ── Final card ── */
+.final-c { background:linear-gradient(135deg,#b8860b,#e8c53a); color:#1a1a1a;
+           border-radius:14px; padding:18px; margin-top:14px;
+           text-align:center; box-shadow:0 4px 14px rgba(232,197,58,.35); }
+.final-c .fl { font-size:0.75rem; font-weight:800; text-transform:uppercase;
+               letter-spacing:1px; opacity:.7; }
+.final-c .fd { font-size:1.1rem; font-weight:900; margin:6px 0 2px; }
+.final-c .fh { font-size:2rem; font-weight:900; }
+.final-c .fv { font-size:0.8rem; margin-top:6px; opacity:.8; }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div>
-    <div class="h1">⚽ Mundial 2026</div>
-    <div class="sub">EE.UU. · México · Canadá &nbsp;|&nbsp; 11 jun — 19 jul</div>
-  </div>
-  <div class="tz-chip">🕐 Hora BsAs</div>
-</div>
+<!-- ── Radios de control de tabs (CSS puro, sin JS) ── -->
+<input type="radio" name="tab" id="r-arg" checked>
+<input type="radio" name="tab" id="r-cal">
+<input type="radio" name="tab" id="r-grupos">
 
-<!-- ══════════════════════ TAB: ARGENTINA ══════════════════════ -->
-<div id="tab-arg" class="tab active">
+<!-- ── Header ── -->
+<header>
+  <div><h1>⚽ Mundial 2026</h1><p>EE.UU. · México · Canadá &nbsp;|&nbsp; 11 jun — 19 jul</p></div>
+  <span class="chip">🕐 Hora BsAs</span>
+</header>
 
-  <div id="next-card"></div>
+<!-- ── Contenido ── -->
+<main>
 
-  <p class="section-title">Los 3 partidos del Grupo J</p>
-  <span class="group-pill">GRUPO J · Argentina · Argelia · Austria · Jordania</span>
-
-  <div class="arg-match-card next" id="arg1">
-    <div class="match-date">MARTES 16 DE JUNIO · Jornada 1</div>
-    <div class="match-teams-row">
-      <div class="team-name arg">🇦🇷 Argentina</div>
-      <div class="vs">vs</div>
-      <div class="team-name">🇩🇿 Argelia</div>
+  <!-- ══ TAB ARGENTINA ══ -->
+  <div id="tab-arg">
+    <div class="next-card" id="next-card">
+      <!-- se rellena con JS, si no funciona muestra el primero estático -->
+      <div class="lbl">Próximo partido</div>
+      <div class="cd">Faltan 16 días</div>
+      <div class="teams">🇦🇷 Argentina<br>vs<br>🇩🇿 Argelia</div>
+      <div class="hs">22:00 <span style="font-size:1rem;opacity:.7">hs</span></div>
+      <div class="hs-label">Hora de Buenos Aires</div>
+      <div class="meta">
+        <span>📅 Martes 16 de junio</span>
+        <span>🏟 Arrowhead Stadium</span>
+        <span>📍 Kansas City, EE.UU.</span>
+      </div>
     </div>
-    <div class="time-venue">
-      <div class="time-badge">22:00 hs</div>
-      <div class="venue">Arrowhead Stadium<br>Kansas City, EE.UU.</div>
+
+    <p class="sec-title">Los 3 partidos del Grupo J</p>
+    <span class="group-pill">Grupo J · Argentina · Argelia · Austria · Jordania</span>
+
+    <div class="card arg-card next-match">
+      <div class="date">MARTES 16 DE JUNIO · Jornada 1</div>
+      <div class="row">
+        <div class="team blue">🇦🇷 Argentina</div><div class="vs">vs</div>
+        <div class="team">🇩🇿 Argelia</div>
+      </div>
+      <div class="bot">
+        <div class="badge">22:00 hs</div>
+        <div class="venue">Arrowhead Stadium<br>Kansas City, EE.UU.</div>
+      </div>
+    </div>
+
+    <div class="card arg-card">
+      <div class="date">DOMINGO 22 DE JUNIO · Jornada 2</div>
+      <div class="row">
+        <div class="team blue">🇦🇷 Argentina</div><div class="vs">vs</div>
+        <div class="team">🇦🇹 Austria</div>
+      </div>
+      <div class="bot">
+        <div class="badge">14:00 hs</div>
+        <div class="venue">AT&amp;T Stadium<br>Dallas, EE.UU.</div>
+      </div>
+    </div>
+
+    <div class="card arg-card">
+      <div class="date">VIERNES 27 DE JUNIO · Jornada 3</div>
+      <div class="row">
+        <div class="team">🇯🇴 Jordania</div><div class="vs">vs</div>
+        <div class="team blue">🇦🇷 Argentina</div>
+      </div>
+      <div class="bot">
+        <div class="badge">23:00 hs</div>
+        <div class="venue">AT&amp;T Stadium<br>Dallas, EE.UU.</div>
+      </div>
+    </div>
+
+    <div class="card info-card">
+      <h3>El torneo en números</h3>
+      <div class="info-row"><span>Equipos</span><b>48 selecciones</b></div>
+      <div class="info-row"><span>Partidos totales</span><b>104</b></div>
+      <div class="info-row"><span>Clasifican por grupo</span><b>Top 2 + mejores 3°</b></div>
+      <div class="info-row"><span>🏆 Final</span><b>Dom 19 jul · 16:00 hs</b></div>
+      <div class="info-row"><span>Sede de la Final</span><b>MetLife Stadium, NJ 🇺🇸</b></div>
     </div>
   </div>
 
-  <div class="arg-match-card" id="arg2">
-    <div class="match-date">DOMINGO 22 DE JUNIO · Jornada 2</div>
-    <div class="match-teams-row">
-      <div class="team-name arg">🇦🇷 Argentina</div>
-      <div class="vs">vs</div>
-      <div class="team-name">🇦🇹 Austria</div>
+  <!-- ══ TAB PARTIDOS ══ -->
+  <div id="tab-cal">
+    <div class="filter-bar">
+      <button class="fbtn on" id="f-todos"    onclick="filtrar('todos')">🌍 Todos</button>
+      <button class="fbtn"    id="f-argentina" onclick="filtrar('argentina')">🇦🇷 Argentina</button>
+      <button class="fbtn"    id="f-hoy"      onclick="filtrar('hoy')">📅 Hoy</button>
     </div>
-    <div class="time-venue">
-      <div class="time-badge">14:00 hs</div>
-      <div class="venue">AT&amp;T Stadium<br>Dallas, EE.UU.</div>
+    <div id="cal"></div>
+  </div>
+
+  <!-- ══ TAB GRUPOS ══ -->
+  <div id="tab-grupos">
+    <div class="g-grid">
+      <div class="g-card"><div class="g-title">GRUPO A</div>
+        <div class="g-team">🇲🇽 México</div><div class="g-team">🇿🇦 Sudáfrica</div>
+        <div class="g-team">🇰🇷 Corea del Sur</div><div class="g-team">🇨🇿 Rep. Checa</div></div>
+      <div class="g-card"><div class="g-title">GRUPO B</div>
+        <div class="g-team">🇨🇦 Canadá</div><div class="g-team">🇨🇭 Suiza</div>
+        <div class="g-team">🇶🇦 Qatar</div><div class="g-team">🇧🇦 Bosnia y Herz.</div></div>
+      <div class="g-card"><div class="g-title">GRUPO C</div>
+        <div class="g-team">🇧🇷 Brasil</div><div class="g-team">🇲🇦 Marruecos</div>
+        <div class="g-team">🇭🇹 Haití</div><div class="g-team">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia</div></div>
+      <div class="g-card"><div class="g-title">GRUPO D</div>
+        <div class="g-team">🇺🇸 EE.UU.</div><div class="g-team">🇵🇾 Paraguay</div>
+        <div class="g-team">🇦🇺 Australia</div><div class="g-team">🇹🇷 Turquía</div></div>
+      <div class="g-card"><div class="g-title">GRUPO E</div>
+        <div class="g-team">🇩🇪 Alemania</div><div class="g-team">🇨🇼 Curazao</div>
+        <div class="g-team">🇨🇮 Costa de Marfil</div><div class="g-team">🇪🇨 Ecuador</div></div>
+      <div class="g-card"><div class="g-title">GRUPO F</div>
+        <div class="g-team">🇳🇱 Países Bajos</div><div class="g-team">🇯🇵 Japón</div>
+        <div class="g-team">🇸🇪 Suecia</div><div class="g-team">🇹🇳 Túnez</div></div>
+      <div class="g-card"><div class="g-title">GRUPO G</div>
+        <div class="g-team">🇧🇪 Bélgica</div><div class="g-team">🇪🇬 Egipto</div>
+        <div class="g-team">🇮🇷 Irán</div><div class="g-team">🇳🇿 Nueva Zelanda</div></div>
+      <div class="g-card"><div class="g-title">GRUPO H</div>
+        <div class="g-team">🇪🇸 España</div><div class="g-team">🇨🇻 Cabo Verde</div>
+        <div class="g-team">🇸🇦 Arabia Saudita</div><div class="g-team">🇺🇾 Uruguay</div></div>
+      <div class="g-card"><div class="g-title">GRUPO I</div>
+        <div class="g-team">🇫🇷 Francia</div><div class="g-team">🇸🇳 Senegal</div>
+        <div class="g-team">🇮🇶 Irak</div><div class="g-team">🇳🇴 Noruega</div></div>
+      <div class="g-card"><div class="g-title">GRUPO J</div>
+        <div class="g-team arg">🇦🇷 Argentina 🏆</div><div class="g-team">🇩🇿 Argelia</div>
+        <div class="g-team">🇦🇹 Austria</div><div class="g-team">🇯🇴 Jordania</div></div>
+      <div class="g-card"><div class="g-title">GRUPO K</div>
+        <div class="g-team">🇵🇹 Portugal</div><div class="g-team">🇨🇩 RD Congo</div>
+        <div class="g-team">🇺🇿 Uzbekistán</div><div class="g-team">🇨🇴 Colombia</div></div>
+      <div class="g-card"><div class="g-title">GRUPO L</div>
+        <div class="g-team">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra</div><div class="g-team">🇭🇷 Croacia</div>
+        <div class="g-team">🇬🇭 Ghana</div><div class="g-team">🇵🇦 Panamá</div></div>
+    </div>
+    <div class="final-c">
+      <div class="fl">🏆 Gran Final</div>
+      <div class="fd">Domingo 19 de julio de 2026</div>
+      <div class="fh">16:00 hs</div>
+      <div class="fv">MetLife Stadium · Nueva York/NJ 🇺🇸</div>
     </div>
   </div>
 
-  <div class="arg-match-card" id="arg3">
-    <div class="match-date">VIERNES 27 DE JUNIO · Jornada 3</div>
-    <div class="match-teams-row">
-      <div class="team-name">🇯🇴 Jordania</div>
-      <div class="vs">vs</div>
-      <div class="team-name arg">🇦🇷 Argentina</div>
-    </div>
-    <div class="time-venue">
-      <div class="time-badge">23:00 hs</div>
-      <div class="venue">AT&amp;T Stadium<br>Dallas, EE.UU.</div>
-    </div>
-  </div>
+</main>
 
-  <div class="info-card">
-    <h3>El torneo</h3>
-    <div class="info-row"><span>Equipos</span><span class="val">48 selecciones</span></div>
-    <div class="info-row"><span>Partidos totales</span><span class="val">104</span></div>
-    <div class="info-row"><span>Clasifican de cada grupo</span><span class="val">Top 2 + mejores 3°</span></div>
-    <div class="info-row"><span>🏆 Gran Final</span><span class="val">Dom 19 jul · 16:00 hs</span></div>
-    <div class="info-row"><span>Sede de la Final</span><span class="val">MetLife Stadium, NJ</span></div>
-  </div>
-
-</div>
-
-<!-- ══════════════════════ TAB: PARTIDOS ══════════════════════ -->
-<div id="tab-cal" class="tab">
-
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="setFilter('todos',this)">🌍 Todos</button>
-    <button class="filter-btn" onclick="setFilter('argentina',this)">🇦🇷 Argentina</button>
-    <button class="filter-btn" onclick="setFilter('hoy',this)" id="btn-hoy">📅 Hoy</button>
-  </div>
-
-  <div id="matches-container"></div>
-
-</div>
-
-<!-- ══════════════════════ TAB: GRUPOS ══════════════════════ -->
-<div id="tab-grupos" class="tab">
-
-  <div class="groups-grid">
-    <div class="group-card"><div class="group-title">GRUPO A</div>
-      <div class="group-team">🇲🇽 México</div><div class="group-team">🇿🇦 Sudáfrica</div>
-      <div class="group-team">🇰🇷 Corea del Sur</div><div class="group-team">🇨🇿 Rep. Checa</div></div>
-    <div class="group-card"><div class="group-title">GRUPO B</div>
-      <div class="group-team">🇨🇦 Canadá</div><div class="group-team">🇨🇭 Suiza</div>
-      <div class="group-team">🇶🇦 Qatar</div><div class="group-team">🇧🇦 Bosnia y Herz.</div></div>
-    <div class="group-card"><div class="group-title">GRUPO C</div>
-      <div class="group-team">🇧🇷 Brasil</div><div class="group-team">🇲🇦 Marruecos</div>
-      <div class="group-team">🇭🇹 Haití</div><div class="group-team">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia</div></div>
-    <div class="group-card"><div class="group-title">GRUPO D</div>
-      <div class="group-team">🇺🇸 EE.UU.</div><div class="group-team">🇵🇾 Paraguay</div>
-      <div class="group-team">🇦🇺 Australia</div><div class="group-team">🇹🇷 Turquía</div></div>
-    <div class="group-card"><div class="group-title">GRUPO E</div>
-      <div class="group-team">🇩🇪 Alemania</div><div class="group-team">🇨🇼 Curazao</div>
-      <div class="group-team">🇨🇮 Costa de Marfil</div><div class="group-team">🇪🇨 Ecuador</div></div>
-    <div class="group-card"><div class="group-title">GRUPO F</div>
-      <div class="group-team">🇳🇱 Países Bajos</div><div class="group-team">🇯🇵 Japón</div>
-      <div class="group-team">🇸🇪 Suecia</div><div class="group-team">🇹🇳 Túnez</div></div>
-    <div class="group-card"><div class="group-title">GRUPO G</div>
-      <div class="group-team">🇧🇪 Bélgica</div><div class="group-team">🇪🇬 Egipto</div>
-      <div class="group-team">🇮🇷 Irán</div><div class="group-team">🇳🇿 Nueva Zelanda</div></div>
-    <div class="group-card"><div class="group-title">GRUPO H</div>
-      <div class="group-team">🇪🇸 España</div><div class="group-team">🇨🇻 Cabo Verde</div>
-      <div class="group-team">🇸🇦 Arabia Saudita</div><div class="group-team">🇺🇾 Uruguay</div></div>
-    <div class="group-card"><div class="group-title">GRUPO I</div>
-      <div class="group-team">🇫🇷 Francia</div><div class="group-team">🇸🇳 Senegal</div>
-      <div class="group-team">🇮🇶 Irak</div><div class="group-team">🇳🇴 Noruega</div></div>
-    <div class="group-card"><div class="group-title">GRUPO J</div>
-      <div class="group-team arg">🇦🇷 Argentina 🏆</div><div class="group-team">🇩🇿 Argelia</div>
-      <div class="group-team">🇦🇹 Austria</div><div class="group-team">🇯🇴 Jordania</div></div>
-    <div class="group-card"><div class="group-title">GRUPO K</div>
-      <div class="group-team">🇵🇹 Portugal</div><div class="group-team">🇨🇩 RD Congo</div>
-      <div class="group-team">🇺🇿 Uzbekistán</div><div class="group-team">🇨🇴 Colombia</div></div>
-    <div class="group-card"><div class="group-title">GRUPO L</div>
-      <div class="group-team">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra</div><div class="group-team">🇭🇷 Croacia</div>
-      <div class="group-team">🇬🇭 Ghana</div><div class="group-team">🇵🇦 Panamá</div></div>
-  </div>
-
-  <br>
-  <div class="final-card">
-    <div class="f-label">🏆 Gran Final</div>
-    <div class="f-date">Domingo 19 de julio de 2026</div>
-    <div class="f-time">16:00 hs</div>
-    <div class="f-venue">MetLife Stadium · East Rutherford, Nueva Jersey 🇺🇸</div>
-  </div>
-
-</div>
-
-<!-- ══════════════════════ BOTTOM NAV ══════════════════════ -->
-<nav class="bottom-nav">
-  <button class="nav-btn active" onclick="showTab('arg',this)">
-    <span class="icon">🇦🇷</span>Argentina
-  </button>
-  <button class="nav-btn" onclick="showTab('cal',this)">
-    <span class="icon">📅</span>Partidos
-  </button>
-  <button class="nav-btn" onclick="showTab('grupos',this)">
-    <span class="icon">📊</span>Grupos
-  </button>
+<!-- ── Bottom Nav ── -->
+<nav>
+  <label for="r-arg"><span class="icon">🇦🇷</span>Argentina</label>
+  <label for="r-cal"><span class="icon">📅</span>Partidos</label>
+  <label for="r-grupos"><span class="icon">📊</span>Grupos</label>
 </nav>
 
 <script>
-// ── Datos: todos los partidos ──────────────────────────────────────
-// formato: [año, mes-1, día, hora, min, "equipo1", "equipo2", "estadio", "ciudad", "grupo", esArgentina]
-const MATCHES = [
-  // JORNADA 1
-  [2026,5,11,16,0,"🇲🇽 México","🇿🇦 Sudáfrica","Estadio Azteca","Ciudad de México 🇲🇽","A",false],
-  [2026,5,11,23,0,"🇰🇷 Corea del Sur","🇨🇿 Rep. Checa","Estadio Akron","Guadalajara 🇲🇽","A",false],
-  [2026,5,12,16,0,"🇨🇦 Canadá","🇧🇦 Bosnia y Herz.","BMO Field","Toronto 🇨🇦","B",false],
-  [2026,5,12,22,0,"🇺🇸 EE.UU.","🇵🇾 Paraguay","SoFi Stadium","Los Ángeles 🇺🇸","D",false],
-  [2026,5,13,16,0,"🇶🇦 Qatar","🇨🇭 Suiza","Levi's Stadium","San Francisco 🇺🇸","B",false],
-  [2026,5,13,19,0,"🇧🇷 Brasil","🇲🇦 Marruecos","MetLife Stadium","Nueva York/NJ 🇺🇸","C",false],
-  [2026,5,13,22,0,"🇭🇹 Haití","🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia","Gillette Stadium","Boston 🇺🇸","C",false],
-  [2026,5,14,1,0,"🇦🇺 Australia","🇹🇷 Turquía","BC Place","Vancouver 🇨🇦","D",false],
-  [2026,5,14,14,0,"🇩🇪 Alemania","🇨🇼 Curazao","NRG Stadium","Houston 🇺🇸","E",false],
-  [2026,5,14,17,0,"🇳🇱 Países Bajos","🇯🇵 Japón","AT&T Stadium","Dallas 🇺🇸","F",false],
-  [2026,5,14,20,0,"🇨🇮 Costa de Marfil","🇪🇨 Ecuador","Lincoln Financial Field","Philadelphia 🇺🇸","E",false],
-  [2026,5,14,23,0,"🇸🇪 Suecia","🇹🇳 Túnez","Estadio BBVA","Monterrey 🇲🇽","F",false],
-  [2026,5,15,13,0,"🇪🇸 España","🇨🇻 Cabo Verde","Mercedes-Benz Stadium","Atlanta 🇺🇸","H",false],
-  [2026,5,15,16,0,"🇧🇪 Bélgica","🇪🇬 Egipto","Lumen Field","Seattle 🇺🇸","G",false],
-  [2026,5,15,19,0,"🇸🇦 Arabia Saudita","🇺🇾 Uruguay","Hard Rock Stadium","Miami 🇺🇸","H",false],
-  [2026,5,15,22,0,"🇮🇷 Irán","🇳🇿 Nueva Zelanda","SoFi Stadium","Los Ángeles 🇺🇸","G",false],
-  [2026,5,16,16,0,"🇫🇷 Francia","🇸🇳 Senegal","MetLife Stadium","Nueva York/NJ 🇺🇸","I",false],
-  [2026,5,16,19,0,"🇮🇶 Irak","🇳🇴 Noruega","Gillette Stadium","Boston 🇺🇸","I",false],
-  [2026,5,16,22,0,"🇦🇷 Argentina","🇩🇿 Argelia","Arrowhead Stadium","Kansas City 🇺🇸","J",true],
-  [2026,5,17,1,0,"🇦🇹 Austria","🇯🇴 Jordania","Levi's Stadium","San Francisco 🇺🇸","J",false],
-  [2026,5,17,14,0,"🇵🇹 Portugal","🇨🇩 RD Congo","NRG Stadium","Houston 🇺🇸","K",false],
-  [2026,5,17,17,0,"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra","🇭🇷 Croacia","AT&T Stadium","Dallas 🇺🇸","L",false],
-  [2026,5,17,20,0,"🇬🇭 Ghana","🇵🇦 Panamá","BMO Field","Toronto 🇨🇦","L",false],
-  [2026,5,17,23,0,"🇺🇿 Uzbekistán","🇨🇴 Colombia","Estadio Azteca","Ciudad de México 🇲🇽","K",false],
-  // JORNADA 2
-  [2026,5,18,13,0,"🇨🇿 Rep. Checa","🇿🇦 Sudáfrica","Mercedes-Benz Stadium","Atlanta 🇺🇸","A",false],
-  [2026,5,18,16,0,"🇨🇭 Suiza","🇧🇦 Bosnia y Herz.","SoFi Stadium","Los Ángeles 🇺🇸","B",false],
-  [2026,5,18,19,0,"🇨🇦 Canadá","🇶🇦 Qatar","BC Place","Vancouver 🇨🇦","B",false],
-  [2026,5,18,22,0,"🇲🇽 México","🇰🇷 Corea del Sur","Estadio Akron","Guadalajara 🇲🇽","A",false],
-  [2026,5,19,16,0,"🇺🇸 EE.UU.","🇦🇺 Australia","Lumen Field","Seattle 🇺🇸","D",false],
-  [2026,5,19,19,0,"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia","🇲🇦 Marruecos","Gillette Stadium","Boston 🇺🇸","C",false],
-  [2026,5,19,21,30,"🇧🇷 Brasil","🇭🇹 Haití","Lincoln Financial Field","Philadelphia 🇺🇸","C",false],
-  [2026,5,20,0,0,"🇹🇷 Turquía","🇵🇾 Paraguay","Levi's Stadium","San Francisco 🇺🇸","D",false],
-  [2026,5,20,14,0,"🇳🇱 Países Bajos","🇸🇪 Suecia","NRG Stadium","Houston 🇺🇸","F",false],
-  [2026,5,20,17,0,"🇩🇪 Alemania","🇨🇮 Costa de Marfil","BMO Field","Toronto 🇨🇦","E",false],
-  [2026,5,20,21,0,"🇪🇨 Ecuador","🇨🇼 Curazao","Arrowhead Stadium","Kansas City 🇺🇸","E",false],
-  [2026,5,21,1,0,"🇹🇳 Túnez","🇯🇵 Japón","Estadio BBVA","Monterrey 🇲🇽","F",false],
-  [2026,5,21,13,0,"🇪🇸 España","🇸🇦 Arabia Saudita","Mercedes-Benz Stadium","Atlanta 🇺🇸","H",false],
-  [2026,5,21,16,0,"🇧🇪 Bélgica","🇮🇷 Irán","SoFi Stadium","Los Ángeles 🇺🇸","G",false],
-  [2026,5,21,19,0,"🇺🇾 Uruguay","🇨🇻 Cabo Verde","Hard Rock Stadium","Miami 🇺🇸","H",false],
-  [2026,5,21,22,0,"🇳🇿 Nueva Zelanda","🇪🇬 Egipto","BC Place","Vancouver 🇨🇦","G",false],
-  [2026,5,22,14,0,"🇦🇷 Argentina","🇦🇹 Austria","AT&T Stadium","Dallas 🇺🇸","J",true],
-  [2026,5,22,18,0,"🇫🇷 Francia","🇮🇶 Irak","Lincoln Financial Field","Philadelphia 🇺🇸","I",false],
-  [2026,5,22,21,0,"🇳🇴 Noruega","🇸🇳 Senegal","MetLife Stadium","Nueva York/NJ 🇺🇸","I",false],
-  [2026,5,23,0,0,"🇯🇴 Jordania","🇩🇿 Argelia","Levi's Stadium","San Francisco 🇺🇸","J",false],
-  [2026,5,23,14,0,"🇵🇹 Portugal","🇺🇿 Uzbekistán","NRG Stadium","Houston 🇺🇸","K",false],
-  [2026,5,23,17,0,"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra","🇬🇭 Ghana","Gillette Stadium","Boston 🇺🇸","L",false],
-  [2026,5,23,20,0,"🇵🇦 Panamá","🇭🇷 Croacia","BMO Field","Toronto 🇨🇦","L",false],
-  [2026,5,23,23,0,"🇨🇴 Colombia","🇨🇩 RD Congo","Estadio Akron","Guadalajara 🇲🇽","K",false],
-  // JORNADA 3
-  [2026,5,24,16,0,"🇨🇭 Suiza","🇨🇦 Canadá","BC Place","Vancouver 🇨🇦","B",false],
-  [2026,5,24,16,0,"🇧🇦 Bosnia y Herz.","🇶🇦 Qatar","Lumen Field","Seattle 🇺🇸","B",false],
-  [2026,5,24,19,0,"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia","🇧🇷 Brasil","Hard Rock Stadium","Miami 🇺🇸","C",false],
-  [2026,5,24,19,0,"🇲🇦 Marruecos","🇭🇹 Haití","Mercedes-Benz Stadium","Atlanta 🇺🇸","C",false],
-  [2026,5,24,22,0,"🇨🇿 Rep. Checa","🇲🇽 México","Estadio Azteca","Ciudad de México 🇲🇽","A",false],
-  [2026,5,24,22,0,"🇿🇦 Sudáfrica","🇰🇷 Corea del Sur","Estadio BBVA","Monterrey 🇲🇽","A",false],
-  [2026,5,25,17,0,"🇨🇼 Curazao","🇨🇮 Costa de Marfil","Lincoln Financial Field","Philadelphia 🇺🇸","E",false],
-  [2026,5,25,17,0,"🇪🇨 Ecuador","🇩🇪 Alemania","MetLife Stadium","Nueva York/NJ 🇺🇸","E",false],
-  [2026,5,25,20,0,"🇯🇵 Japón","🇸🇪 Suecia","AT&T Stadium","Dallas 🇺🇸","F",false],
-  [2026,5,25,20,0,"🇹🇳 Túnez","🇳🇱 Países Bajos","Arrowhead Stadium","Kansas City 🇺🇸","F",false],
-  [2026,5,25,23,0,"🇹🇷 Turquía","🇺🇸 EE.UU.","SoFi Stadium","Los Ángeles 🇺🇸","D",false],
-  [2026,5,25,23,0,"🇵🇾 Paraguay","🇦🇺 Australia","Levi's Stadium","San Francisco 🇺🇸","D",false],
-  [2026,5,26,16,0,"🇳🇴 Noruega","🇫🇷 Francia","Gillette Stadium","Boston 🇺🇸","I",false],
-  [2026,5,26,16,0,"🇸🇳 Senegal","🇮🇶 Irak","BMO Field","Toronto 🇨🇦","I",false],
-  [2026,5,26,21,0,"🇨🇻 Cabo Verde","🇸🇦 Arabia Saudita","NRG Stadium","Houston 🇺🇸","H",false],
-  [2026,5,26,21,0,"🇺🇾 Uruguay","🇪🇸 España","Estadio Akron","Guadalajara 🇲🇽","H",false],
-  [2026,5,27,0,0,"🇪🇬 Egipto","🇮🇷 Irán","Lumen Field","Seattle 🇺🇸","G",false],
-  [2026,5,27,0,0,"🇳🇿 Nueva Zelanda","🇧🇪 Bélgica","BC Place","Vancouver 🇨🇦","G",false],
-  [2026,5,27,18,0,"🇵🇦 Panamá","🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra","MetLife Stadium","Nueva York/NJ 🇺🇸","L",false],
-  [2026,5,27,18,0,"🇭🇷 Croacia","🇬🇭 Ghana","Lincoln Financial Field","Philadelphia 🇺🇸","L",false],
-  [2026,5,27,20,30,"🇨🇴 Colombia","🇵🇹 Portugal","Hard Rock Stadium","Miami 🇺🇸","K",false],
-  [2026,5,27,20,30,"🇨🇩 RD Congo","🇺🇿 Uzbekistán","Mercedes-Benz Stadium","Atlanta 🇺🇸","K",false],
-  [2026,5,27,23,0,"🇯🇴 Jordania","🇦🇷 Argentina","AT&T Stadium","Dallas 🇺🇸","J",true],
-  [2026,5,27,23,0,"🇩🇿 Argelia","🇦🇹 Austria","Arrowhead Stadium","Kansas City 🇺🇸","J",false],
-  // RONDA DE 32
-  [2026,5,28,16,0,"2° Grupo A","2° Grupo B","SoFi Stadium","Los Ángeles 🇺🇸","32vos",false],
-  [2026,5,28,19,0,"2° Grupo E","2° Grupo I","AT&T Stadium","Dallas 🇺🇸","32vos",false],
-  [2026,5,28,23,0,"1° Grupo I","Mejor 3° (C/D/F/G/H)","MetLife Stadium","Nueva York/NJ 🇺🇸","32vos",false],
-  [2026,5,29,3,0,"1° Grupo F","2° Grupo C","Estadio BBVA","Monterrey 🇲🇽","32vos",false],
-  [2026,5,29,14,0,"1° Grupo C","2° Grupo F","NRG Stadium","Houston 🇺🇸","32vos",false],
-  [2026,5,29,17,30,"1° Grupo E","Mejor 3° (A/B/C/D/F)","Gillette Stadium","Boston 🇺🇸","32vos",false],
-  [2026,5,29,22,0,"1° Grupo A","Mejor 3° (C/E/F/H/I)","Estadio Azteca","Ciudad de México 🇲🇽","32vos",false],
-  [2026,5,30,13,0,"1° Grupo L","Mejor 3° (E/H/I/J/K)","Mercedes-Benz Stadium","Atlanta 🇺🇸","32vos",false],
-  [2026,5,30,17,0,"1° Grupo G","Mejor 3° (A/E/H/I/J)","Lumen Field","Seattle 🇺🇸","32vos",false],
-  [2026,5,30,21,0,"1° Grupo D","Mejor 3° (B/E/F/I/J)","Levi's Stadium","San Francisco 🇺🇸","32vos",false],
-  [2026,6,1,16,0,"1° Grupo H","2° Grupo J","SoFi Stadium","Los Ángeles 🇺🇸","32vos",false],
-  [2026,6,1,20,0,"2° Grupo K","2° Grupo L","BMO Field","Toronto 🇨🇦","32vos",false],
-  [2026,6,2,0,0,"1° Grupo B","Mejor 3° (E/F/G/I/J)","BC Place","Vancouver 🇨🇦","32vos",false],
-  [2026,6,2,15,0,"2° Grupo D","2° Grupo G","AT&T Stadium","Dallas 🇺🇸","32vos",false],
-  [2026,6,2,19,0,"1° Grupo J","2° Grupo H","Hard Rock Stadium","Miami 🇺🇸","32vos",false],
-  [2026,6,2,22,30,"1° Grupo K","Mejor 3° (D/E/I/J/L)","Arrowhead Stadium","Kansas City 🇺🇸","32vos",false],
-  // OCTAVOS
-  [2026,6,4,14,0,"Ganador R32","Ganador R32","NRG Stadium","Houston 🇺🇸","Octavos",false],
-  [2026,6,4,18,0,"Ganador R32","Ganador R32","Lincoln Financial Field","Philadelphia 🇺🇸","Octavos",false],
-  [2026,6,5,17,0,"Ganador R32","Ganador R32","MetLife Stadium","Nueva York/NJ 🇺🇸","Octavos",false],
-  [2026,6,5,21,0,"Ganador R32","Ganador R32","Estadio Azteca","Ciudad de México 🇲🇽","Octavos",false],
-  [2026,6,6,16,0,"Ganador R32","Ganador R32","AT&T Stadium","Dallas 🇺🇸","Octavos",false],
-  [2026,6,6,21,0,"Ganador R32","Ganador R32","Lumen Field","Seattle 🇺🇸","Octavos",false],
-  [2026,6,7,13,0,"Ganador R32","Ganador R32","Mercedes-Benz Stadium","Atlanta 🇺🇸","Octavos",false],
-  [2026,6,7,17,0,"Ganador R32","Ganador R32","BC Place","Vancouver 🇨🇦","Octavos",false],
-  // CUARTOS
-  [2026,6,9,17,0,"Ganador Octavos","Ganador Octavos","Gillette Stadium","Boston 🇺🇸","Cuartos",false],
-  [2026,6,10,16,0,"Ganador Octavos","Ganador Octavos","SoFi Stadium","Los Ángeles 🇺🇸","Cuartos",false],
-  [2026,6,11,18,0,"Ganador Octavos","Ganador Octavos","Hard Rock Stadium","Miami 🇺🇸","Cuartos",false],
-  [2026,6,11,22,0,"Ganador Octavos","Ganador Octavos","Arrowhead Stadium","Kansas City 🇺🇸","Cuartos",false],
-  // SEMIS
-  [2026,6,14,17,0,"Ganador Cuartos","Ganador Cuartos","AT&T Stadium","Dallas 🇺🇸","Semis",false],
-  [2026,6,15,17,0,"Ganador Cuartos","Ganador Cuartos","Mercedes-Benz Stadium","Atlanta 🇺🇸","Semis",false],
-  // 3ER PUESTO
-  [2026,6,18,17,0,"3er puesto","3er puesto","Hard Rock Stadium","Miami 🇺🇸","3° Puesto",false],
-  // FINAL
-  [2026,6,19,16,0,"🏆 Campeón","🏆 Subcampeón","MetLife Stadium","Nueva York/NJ 🇺🇸","Final",false],
+// [año, mes0, día, hora, min, e1, e2, estadio, ciudad, grupo, esArg]
+var M=[
+ [2026,5,11,16,0,"🇲🇽 México","🇿🇦 Sudáfrica","Estadio Azteca","Ciudad de México 🇲🇽","A",0],
+ [2026,5,11,23,0,"🇰🇷 Corea del Sur","🇨🇿 Rep. Checa","Estadio Akron","Guadalajara 🇲🇽","A",0],
+ [2026,5,12,16,0,"🇨🇦 Canadá","🇧🇦 Bosnia y Herz.","BMO Field","Toronto 🇨🇦","B",0],
+ [2026,5,12,22,0,"🇺🇸 EE.UU.","🇵🇾 Paraguay","SoFi Stadium","Los Ángeles 🇺🇸","D",0],
+ [2026,5,13,16,0,"🇶🇦 Qatar","🇨🇭 Suiza","Levi's Stadium","San Francisco 🇺🇸","B",0],
+ [2026,5,13,19,0,"🇧🇷 Brasil","🇲🇦 Marruecos","MetLife Stadium","Nueva York/NJ 🇺🇸","C",0],
+ [2026,5,13,22,0,"🇭🇹 Haití","🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia","Gillette Stadium","Boston 🇺🇸","C",0],
+ [2026,5,14, 1,0,"🇦🇺 Australia","🇹🇷 Turquía","BC Place","Vancouver 🇨🇦","D",0],
+ [2026,5,14,14,0,"🇩🇪 Alemania","🇨🇼 Curazao","NRG Stadium","Houston 🇺🇸","E",0],
+ [2026,5,14,17,0,"🇳🇱 Países Bajos","🇯🇵 Japón","AT&T Stadium","Dallas 🇺🇸","F",0],
+ [2026,5,14,20,0,"🇨🇮 Costa de Marfil","🇪🇨 Ecuador","Lincoln Financial Field","Philadelphia 🇺🇸","E",0],
+ [2026,5,14,23,0,"🇸🇪 Suecia","🇹🇳 Túnez","Estadio BBVA","Monterrey 🇲🇽","F",0],
+ [2026,5,15,13,0,"🇪🇸 España","🇨🇻 Cabo Verde","Mercedes-Benz Stadium","Atlanta 🇺🇸","H",0],
+ [2026,5,15,16,0,"🇧🇪 Bélgica","🇪🇬 Egipto","Lumen Field","Seattle 🇺🇸","G",0],
+ [2026,5,15,19,0,"🇸🇦 Arabia Saudita","🇺🇾 Uruguay","Hard Rock Stadium","Miami 🇺🇸","H",0],
+ [2026,5,15,22,0,"🇮🇷 Irán","🇳🇿 Nueva Zelanda","SoFi Stadium","Los Ángeles 🇺🇸","G",0],
+ [2026,5,16,16,0,"🇫🇷 Francia","🇸🇳 Senegal","MetLife Stadium","Nueva York/NJ 🇺🇸","I",0],
+ [2026,5,16,19,0,"🇮🇶 Irak","🇳🇴 Noruega","Gillette Stadium","Boston 🇺🇸","I",0],
+ [2026,5,16,22,0,"🇦🇷 Argentina","🇩🇿 Argelia","Arrowhead Stadium","Kansas City 🇺🇸","J",1],
+ [2026,5,17, 1,0,"🇦🇹 Austria","🇯🇴 Jordania","Levi's Stadium","San Francisco 🇺🇸","J",0],
+ [2026,5,17,14,0,"🇵🇹 Portugal","🇨🇩 RD Congo","NRG Stadium","Houston 🇺🇸","K",0],
+ [2026,5,17,17,0,"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra","🇭🇷 Croacia","AT&T Stadium","Dallas 🇺🇸","L",0],
+ [2026,5,17,20,0,"🇬🇭 Ghana","🇵🇦 Panamá","BMO Field","Toronto 🇨🇦","L",0],
+ [2026,5,17,23,0,"🇺🇿 Uzbekistán","🇨🇴 Colombia","Estadio Azteca","Ciudad de México 🇲🇽","K",0],
+ [2026,5,18,13,0,"🇨🇿 Rep. Checa","🇿🇦 Sudáfrica","Mercedes-Benz Stadium","Atlanta 🇺🇸","A",0],
+ [2026,5,18,16,0,"🇨🇭 Suiza","🇧🇦 Bosnia y Herz.","SoFi Stadium","Los Ángeles 🇺🇸","B",0],
+ [2026,5,18,19,0,"🇨🇦 Canadá","🇶🇦 Qatar","BC Place","Vancouver 🇨🇦","B",0],
+ [2026,5,18,22,0,"🇲🇽 México","🇰🇷 Corea del Sur","Estadio Akron","Guadalajara 🇲🇽","A",0],
+ [2026,5,19,16,0,"🇺🇸 EE.UU.","🇦🇺 Australia","Lumen Field","Seattle 🇺🇸","D",0],
+ [2026,5,19,19,0,"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia","🇲🇦 Marruecos","Gillette Stadium","Boston 🇺🇸","C",0],
+ [2026,5,19,21,30,"🇧🇷 Brasil","🇭🇹 Haití","Lincoln Financial Field","Philadelphia 🇺🇸","C",0],
+ [2026,5,20, 0,0,"🇹🇷 Turquía","🇵🇾 Paraguay","Levi's Stadium","San Francisco 🇺🇸","D",0],
+ [2026,5,20,14,0,"🇳🇱 Países Bajos","🇸🇪 Suecia","NRG Stadium","Houston 🇺🇸","F",0],
+ [2026,5,20,17,0,"🇩🇪 Alemania","🇨🇮 Costa de Marfil","BMO Field","Toronto 🇨🇦","E",0],
+ [2026,5,20,21,0,"🇪🇨 Ecuador","🇨🇼 Curazao","Arrowhead Stadium","Kansas City 🇺🇸","E",0],
+ [2026,5,21, 1,0,"🇹🇳 Túnez","🇯🇵 Japón","Estadio BBVA","Monterrey 🇲🇽","F",0],
+ [2026,5,21,13,0,"🇪🇸 España","🇸🇦 Arabia Saudita","Mercedes-Benz Stadium","Atlanta 🇺🇸","H",0],
+ [2026,5,21,16,0,"🇧🇪 Bélgica","🇮🇷 Irán","SoFi Stadium","Los Ángeles 🇺🇸","G",0],
+ [2026,5,21,19,0,"🇺🇾 Uruguay","🇨🇻 Cabo Verde","Hard Rock Stadium","Miami 🇺🇸","H",0],
+ [2026,5,21,22,0,"🇳🇿 Nueva Zelanda","🇪🇬 Egipto","BC Place","Vancouver 🇨🇦","G",0],
+ [2026,5,22,14,0,"🇦🇷 Argentina","🇦🇹 Austria","AT&T Stadium","Dallas 🇺🇸","J",1],
+ [2026,5,22,18,0,"🇫🇷 Francia","🇮🇶 Irak","Lincoln Financial Field","Philadelphia 🇺🇸","I",0],
+ [2026,5,22,21,0,"🇳🇴 Noruega","🇸🇳 Senegal","MetLife Stadium","Nueva York/NJ 🇺🇸","I",0],
+ [2026,5,23, 0,0,"🇯🇴 Jordania","🇩🇿 Argelia","Levi's Stadium","San Francisco 🇺🇸","J",0],
+ [2026,5,23,14,0,"🇵🇹 Portugal","🇺🇿 Uzbekistán","NRG Stadium","Houston 🇺🇸","K",0],
+ [2026,5,23,17,0,"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra","🇬🇭 Ghana","Gillette Stadium","Boston 🇺🇸","L",0],
+ [2026,5,23,20,0,"🇵🇦 Panamá","🇭🇷 Croacia","BMO Field","Toronto 🇨🇦","L",0],
+ [2026,5,23,23,0,"🇨🇴 Colombia","🇨🇩 RD Congo","Estadio Akron","Guadalajara 🇲🇽","K",0],
+ [2026,5,24,16,0,"🇨🇭 Suiza","🇨🇦 Canadá","BC Place","Vancouver 🇨🇦","B",0],
+ [2026,5,24,16,0,"🇧🇦 Bosnia y Herz.","🇶🇦 Qatar","Lumen Field","Seattle 🇺🇸","B",0],
+ [2026,5,24,19,0,"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia","🇧🇷 Brasil","Hard Rock Stadium","Miami 🇺🇸","C",0],
+ [2026,5,24,19,0,"🇲🇦 Marruecos","🇭🇹 Haití","Mercedes-Benz Stadium","Atlanta 🇺🇸","C",0],
+ [2026,5,24,22,0,"🇨🇿 Rep. Checa","🇲🇽 México","Estadio Azteca","Ciudad de México 🇲🇽","A",0],
+ [2026,5,24,22,0,"🇿🇦 Sudáfrica","🇰🇷 Corea del Sur","Estadio BBVA","Monterrey 🇲🇽","A",0],
+ [2026,5,25,17,0,"🇨🇼 Curazao","🇨🇮 Costa de Marfil","Lincoln Financial Field","Philadelphia 🇺🇸","E",0],
+ [2026,5,25,17,0,"🇪🇨 Ecuador","🇩🇪 Alemania","MetLife Stadium","Nueva York/NJ 🇺🇸","E",0],
+ [2026,5,25,20,0,"🇯🇵 Japón","🇸🇪 Suecia","AT&T Stadium","Dallas 🇺🇸","F",0],
+ [2026,5,25,20,0,"🇹🇳 Túnez","🇳🇱 Países Bajos","Arrowhead Stadium","Kansas City 🇺🇸","F",0],
+ [2026,5,25,23,0,"🇹🇷 Turquía","🇺🇸 EE.UU.","SoFi Stadium","Los Ángeles 🇺🇸","D",0],
+ [2026,5,25,23,0,"🇵🇾 Paraguay","🇦🇺 Australia","Levi's Stadium","San Francisco 🇺🇸","D",0],
+ [2026,5,26,16,0,"🇳🇴 Noruega","🇫🇷 Francia","Gillette Stadium","Boston 🇺🇸","I",0],
+ [2026,5,26,16,0,"🇸🇳 Senegal","🇮🇶 Irak","BMO Field","Toronto 🇨🇦","I",0],
+ [2026,5,26,21,0,"🇨🇻 Cabo Verde","🇸🇦 Arabia Saudita","NRG Stadium","Houston 🇺🇸","H",0],
+ [2026,5,26,21,0,"🇺🇾 Uruguay","🇪🇸 España","Estadio Akron","Guadalajara 🇲🇽","H",0],
+ [2026,5,27, 0,0,"🇪🇬 Egipto","🇮🇷 Irán","Lumen Field","Seattle 🇺🇸","G",0],
+ [2026,5,27, 0,0,"🇳🇿 Nueva Zelanda","🇧🇪 Bélgica","BC Place","Vancouver 🇨🇦","G",0],
+ [2026,5,27,18,0,"🇵🇦 Panamá","🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra","MetLife Stadium","Nueva York/NJ 🇺🇸","L",0],
+ [2026,5,27,18,0,"🇭🇷 Croacia","🇬🇭 Ghana","Lincoln Financial Field","Philadelphia 🇺🇸","L",0],
+ [2026,5,27,20,30,"🇨🇴 Colombia","🇵🇹 Portugal","Hard Rock Stadium","Miami 🇺🇸","K",0],
+ [2026,5,27,20,30,"🇨🇩 RD Congo","🇺🇿 Uzbekistán","Mercedes-Benz Stadium","Atlanta 🇺🇸","K",0],
+ [2026,5,27,23,0,"🇯🇴 Jordania","🇦🇷 Argentina","AT&T Stadium","Dallas 🇺🇸","J",1],
+ [2026,5,27,23,0,"🇩🇿 Argelia","🇦🇹 Austria","Arrowhead Stadium","Kansas City 🇺🇸","J",0],
+ // Ronda 32
+ [2026,5,28,16,0,"2° Grupo A","2° Grupo B","SoFi Stadium","Los Ángeles 🇺🇸","32vos",0],
+ [2026,5,28,19,0,"2° Grupo E","2° Grupo I","AT&T Stadium","Dallas 🇺🇸","32vos",0],
+ [2026,5,28,23,0,"1° Grupo I","Mejor 3° C/D/F/G/H","MetLife Stadium","Nueva York/NJ 🇺🇸","32vos",0],
+ [2026,5,29, 3,0,"1° Grupo F","2° Grupo C","Estadio BBVA","Monterrey 🇲🇽","32vos",0],
+ [2026,5,29,14,0,"1° Grupo C","2° Grupo F","NRG Stadium","Houston 🇺🇸","32vos",0],
+ [2026,5,29,17,30,"1° Grupo E","Mejor 3° A/B/C/D/F","Gillette Stadium","Boston 🇺🇸","32vos",0],
+ [2026,5,29,22,0,"1° Grupo A","Mejor 3° C/E/F/H/I","Estadio Azteca","Ciudad de México 🇲🇽","32vos",0],
+ [2026,5,30,13,0,"1° Grupo L","Mejor 3° E/H/I/J/K","Mercedes-Benz Stadium","Atlanta 🇺🇸","32vos",0],
+ [2026,5,30,17,0,"1° Grupo G","Mejor 3° A/E/H/I/J","Lumen Field","Seattle 🇺🇸","32vos",0],
+ [2026,5,30,21,0,"1° Grupo D","Mejor 3° B/E/F/I/J","Levi's Stadium","San Francisco 🇺🇸","32vos",0],
+ [2026,6, 1,16,0,"1° Grupo H","2° Grupo J","SoFi Stadium","Los Ángeles 🇺🇸","32vos",0],
+ [2026,6, 1,20,0,"2° Grupo K","2° Grupo L","BMO Field","Toronto 🇨🇦","32vos",0],
+ [2026,6, 2, 0,0,"1° Grupo B","Mejor 3° E/F/G/I/J","BC Place","Vancouver 🇨🇦","32vos",0],
+ [2026,6, 2,15,0,"2° Grupo D","2° Grupo G","AT&T Stadium","Dallas 🇺🇸","32vos",0],
+ [2026,6, 2,19,0,"1° Grupo J","2° Grupo H","Hard Rock Stadium","Miami 🇺🇸","32vos",0],
+ [2026,6, 2,22,30,"1° Grupo K","Mejor 3° D/E/I/J/L","Arrowhead Stadium","Kansas City 🇺🇸","32vos",0],
+ // Octavos
+ [2026,6, 4,14,0,"Ganador R32","Ganador R32","NRG Stadium","Houston 🇺🇸","Octavos",0],
+ [2026,6, 4,18,0,"Ganador R32","Ganador R32","Lincoln Financial Field","Philadelphia 🇺🇸","Octavos",0],
+ [2026,6, 5,17,0,"Ganador R32","Ganador R32","MetLife Stadium","Nueva York/NJ 🇺🇸","Octavos",0],
+ [2026,6, 5,21,0,"Ganador R32","Ganador R32","Estadio Azteca","Ciudad de México 🇲🇽","Octavos",0],
+ [2026,6, 6,16,0,"Ganador R32","Ganador R32","AT&T Stadium","Dallas 🇺🇸","Octavos",0],
+ [2026,6, 6,21,0,"Ganador R32","Ganador R32","Lumen Field","Seattle 🇺🇸","Octavos",0],
+ [2026,6, 7,13,0,"Ganador R32","Ganador R32","Mercedes-Benz Stadium","Atlanta 🇺🇸","Octavos",0],
+ [2026,6, 7,17,0,"Ganador R32","Ganador R32","BC Place","Vancouver 🇨🇦","Octavos",0],
+ // Cuartos
+ [2026,6, 9,17,0,"Ganador Octavos","Ganador Octavos","Gillette Stadium","Boston 🇺🇸","Cuartos",0],
+ [2026,6,10,16,0,"Ganador Octavos","Ganador Octavos","SoFi Stadium","Los Ángeles 🇺🇸","Cuartos",0],
+ [2026,6,11,18,0,"Ganador Octavos","Ganador Octavos","Hard Rock Stadium","Miami 🇺🇸","Cuartos",0],
+ [2026,6,11,22,0,"Ganador Octavos","Ganador Octavos","Arrowhead Stadium","Kansas City 🇺🇸","Cuartos",0],
+ // Semis
+ [2026,6,14,17,0,"Ganador Cuartos","Ganador Cuartos","AT&T Stadium","Dallas 🇺🇸","Semis",0],
+ [2026,6,15,17,0,"Ganador Cuartos","Ganador Cuartos","Mercedes-Benz Stadium","Atlanta 🇺🇸","Semis",0],
+ // 3° puesto
+ [2026,6,18,17,0,"3er puesto","3er puesto","Hard Rock Stadium","Miami 🇺🇸","3° Puesto",0],
+ // Final
+ [2026,6,19,16,0,"Campeón","Subcampeón","MetLife Stadium","Nueva York/NJ 🇺🇸","Final",0]
 ];
 
-// Nombres de días y meses en español
-const DIAS = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
-const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-const MESES_CORTOS = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+var DIAS=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+var MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+var filtroActual="todos";
 
-function matchDate(m) { return new Date(m[0], m[1], m[2], m[3], m[4]); }
+function hs(h,m){ return (h<10?"0"+h:h)+":"+(m<10?"0"+m:m); }
+function mDate(x){ return new Date(x[0],x[1],x[2],x[3],x[4]); }
+function dkey(x){ return x[0]+"-"+x[1]+"-"+x[2]; }
 
-function formatTime(h, min) {
-  return String(h).padStart(2,'0') + ':' + String(min).padStart(2,'0');
+function grClass(g){
+  if(g==="J") return "a";
+  if(["32vos","Octavos","Cuartos","Semis","3° Puesto","Final"].indexOf(g)>=0) return "e";
+  return "g";
 }
 
-function dayKey(m) { return `${m[0]}-${m[1]}-${m[2]}`; }
-
-function friendlyDay(d) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const target = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  const diff = Math.round((target - today) / 86400000);
-  if (diff === 0) return '<span class="today-tag">HOY</span>';
-  if (diff === 1) return '<span class="tomorrow-tag">MAÑANA</span>';
-  return '';
+function filtrar(f){
+  filtroActual=f;
+  ["todos","argentina","hoy"].forEach(function(id){
+    var el=document.getElementById("f-"+id);
+    if(el) el.className="fbtn"+(f===id?" on":"");
+  });
+  buildCal();
 }
 
-function groupLabel(g) {
-  if (g.startsWith('Gr')) return 'elim';
-  if (['32vos','Octavos','Cuartos','Semis','3° Puesto','Final'].includes(g)) return 'elim';
-  return '';
-}
-
-// ── Construir el calendario ────────────────────────────────────────
-let currentFilter = 'todos';
-
-function buildCalendar(filter) {
-  const container = document.getElementById('matches-container');
-  const today = new Date(); today.setHours(0,0,0,0);
-
-  // Agrupar por día
-  const byDay = {};
-  for (const m of MATCHES) {
-    if (filter === 'argentina' && !m[10]) continue;
-    const k = dayKey(m);
-    if (!byDay[k]) byDay[k] = [];
-    byDay[k].push(m);
-  }
-
-  if (Object.keys(byDay).length === 0) {
-    container.innerHTML = '<div class="no-results">No hay partidos de Argentina este día.</div>';
-    return;
-  }
-
-  let html = '';
-  let scrollToId = null;
-
-  for (const k of Object.keys(byDay).sort()) {
-    const [y,mo,d] = k.split('-').map(Number);
-    const date = new Date(y, mo, d);
-    const dayLabel = `${DIAS[date.getDay()]} ${d} de ${MESES[mo]}`;
-    const tag = friendlyDay(date);
-    const sectionId = 'day-' + k;
-
-    // Marcar hoy para scroll
-    if (!scrollToId && date >= today) scrollToId = sectionId;
-
-    html += `<div class="day-section" id="${sectionId}">
-      <div class="day-header">${dayLabel} ${tag}</div>`;
-
-    for (const m of byDay[k]) {
-      const isArg = m[10];
-      const isMidnight = (m[3] === 0 && m[4] === 0);
-      const timeStr = formatTime(m[3], m[4]);
-      const badge = m[9];
-      const badgeClass = isArg ? 'gr-badge arg' : (groupLabel(badge) ? 'gr-badge elim' : 'gr-badge');
-
-      html += `<div class="match-card ${isArg ? 'arg-card' : ''}">
-        <div class="time">${timeStr}${isMidnight ? '<span class="midnight">madrugada</span>' : ''}</div>
-        <div class="info">
-          <div class="teams ${isArg ? 'arg-teams' : ''}">${m[5]} vs ${m[6]}</div>
-          <div class="venue-line">${m[7]} · ${m[8]}</div>
-        </div>
-        <div class="${badgeClass}">${badge}</div>
-      </div>`;
+function buildCal(){
+  try{
+    var cal=document.getElementById("cal");
+    if(!cal) return;
+    var now=new Date(), today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    var byDay={};
+    for(var i=0;i<M.length;i++){
+      var x=M[i];
+      if(filtroActual==="argentina" && !x[10]) continue;
+      if(filtroActual==="hoy"){
+        var d=new Date(x[0],x[1],x[2]);
+        if(d.getTime()!==today.getTime()) continue;
+      }
+      var k=dkey(x);
+      if(!byDay[k]) byDay[k]=[];
+      byDay[k].push(x);
     }
-    html += '</div>';
-  }
-
-  container.innerHTML = html;
-
-  // Scroll al primer día próximo
-  if (scrollToId) {
-    setTimeout(() => {
-      const el = document.getElementById(scrollToId);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 80);
-  }
+    var keys=Object.keys(byDay).sort();
+    if(!keys.length){ cal.innerHTML='<div class="no-res">No hay partidos para este filtro.</div>'; return; }
+    var html="", firstFuture=null;
+    for(var ki=0;ki<keys.length;ki++){
+      var k=keys[ki], parts=k.split("-");
+      var y=+parts[0],mo=+parts[1],d=+parts[2];
+      var date=new Date(y,mo,d);
+      var diff=Math.round((date-today)/86400000);
+      var tag=diff===0?' <span class="tag-hoy">HOY</span>':diff===1?' <span class="tag-man">MAÑANA</span>':"";
+      var dayStr=DIAS[date.getDay()]+" "+d+" de "+MESES[mo];
+      var sid="ds-"+k;
+      if(firstFuture===null && diff>=0) firstFuture=sid;
+      html+='<div class="day-block" id="'+sid+'"><div class="day-hdr">'+dayStr+tag+"</div>";
+      var list=byDay[k];
+      for(var j=0;j<list.length;j++){
+        var x=list[j], isA=x[10], gc=grClass(x[9]);
+        var isMid=x[3]===0&&x[4]===0;
+        html+='<div class="m-card'+(isA?" arg")+'">'
+          +'<div class="hs">'+hs(x[3],x[4])+(isMid?'<small>madrugada</small>':"")+' </div>'
+          +'<div class="inf">'
+          +'<div class="teams'+(isA?" arg")+'">'+(x[5]+' vs '+x[6])+'</div>'
+          +'<div class="ven">'+x[7]+' · '+x[8]+'</div></div>'
+          +'<div class="gr '+gc+'">'+x[9]+'</div></div>';
+      }
+      html+="</div>";
+    }
+    cal.innerHTML=html;
+    if(firstFuture){
+      setTimeout(function(){
+        var el=document.getElementById(firstFuture);
+        if(el) el.scrollIntoView({block:"start"});
+      },100);
+    }
+  }catch(e){ console.error(e); }
 }
 
-function setFilter(f, btn) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  buildCalendar(f);
+// Actualizar countdown dinámico de Argentina
+function updateNextCard(){
+  try{
+    var now=new Date();
+    var argMs=M.filter(function(x){return x[10];});
+    var next=null;
+    for(var i=0;i<argMs.length;i++){ if(mDate(argMs[i])>now){next=argMs[i];break;} }
+    if(!next) return;
+    var d=mDate(next);
+    var today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    var days=Math.ceil((new Date(d.getFullYear(),d.getMonth(),d.getDate())-today)/86400000);
+    var cd=days===0?"¡HOY juega Argentina! 🎉":days===1?"¡MAÑANA juega Argentina!":"Faltan "+days+" días";
+    var el=document.getElementById("next-card");
+    if(!el) return;
+    el.innerHTML='<div class="lbl">Próximo partido</div>'
+      +'<div class="cd">'+cd+'</div>'
+      +'<div class="teams">'+next[5]+'<br>vs<br>'+next[6]+'</div>'
+      +'<div class="hs">'+hs(next[3],next[4])+' <span style="font-size:1rem;opacity:.7">hs</span></div>'
+      +'<div class="hs-label">Hora de Buenos Aires</div>'
+      +'<div style="height:10px"></div>'
+      +'<div class="meta">'
+      +'<span>📅 '+DIAS[d.getDay()]+" "+d.getDate()+" de "+MESES[d.getMonth()]+'</span>'
+      +'<span>🏟 '+next[7]+'</span>'
+      +'<span>📍 '+next[8]+'</span></div>';
+  }catch(e){ console.error(e); }
 }
 
-// ── Próximo partido de Argentina ───────────────────────────────────
-function buildNextArgCard() {
-  const now = new Date();
-  const argMatches = MATCHES.filter(m => m[10]);
-  let next = null;
-  for (const m of argMatches) {
-    if (matchDate(m) > now) { next = m; break; }
-  }
+updateNextCard();
+buildCal();
+setInterval(updateNextCard,60000);
 
-  const container = document.getElementById('next-card');
-  if (!next) {
-    container.innerHTML = '';
-    return;
-  }
-
-  const d = matchDate(next);
-  const today = new Date(); today.setHours(0,0,0,0);
-  const daysLeft = Math.ceil((new Date(d.getFullYear(),d.getMonth(),d.getDate()) - today) / 86400000);
-  let countdown = '';
-  if (daysLeft === 0) countdown = '¡HOY JUEGA ARGENTINA! 🎉';
-  else if (daysLeft === 1) countdown = '¡MAÑANA juega Argentina!';
-  else countdown = `Faltan ${daysLeft} días`;
-
-  const dayName = DIAS[d.getDay()];
-  const dateStr = `${dayName} ${d.getDate()} de ${MESES[d.getMonth()]}`;
-  const timeStr = formatTime(next[3], next[4]);
-
-  container.innerHTML = `
-    <div class="next-match-card">
-      <div class="card-label">Próximo partido</div>
-      <div class="countdown">${countdown}</div>
-      <div class="teams">${next[5]}<br>vs<br>${next[6]}</div>
-      <div class="time-big">${timeStr} <span style="font-size:1rem;opacity:.7">hs</span></div>
-      <div class="time-label">Hora de Buenos Aires</div>
-      <div style="height:10px"></div>
-      <div class="match-meta">
-        <div class="meta-item">📅 ${dateStr}</div>
-        <div class="meta-item">🏟 ${next[7]}</div>
-        <div class="meta-item">📍 ${next[8]}</div>
-      </div>
-    </div>`;
-}
-
-// ── Navegación ─────────────────────────────────────────────────────
-function showTab(id, btn) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
-  if (id === 'cal') buildCalendar(currentFilter);
-  window.scrollTo(0, 0);
-}
-
-// ── Init ───────────────────────────────────────────────────────────
-buildNextArgCard();
-buildCalendar('todos'); // pre-build so it's fast when user opens it
-
-// Actualizar countdown cada minuto
-setInterval(buildNextArgCard, 60000);
+// Cuando el usuario entra a la pestaña Partidos, regenerar
+document.getElementById("r-cal").addEventListener("change",function(){ buildCal(); });
 </script>
 </body>
 </html>
